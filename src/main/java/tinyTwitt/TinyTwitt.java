@@ -1,3 +1,4 @@
+package tinyTwitt;
 import java.io.IOException;
 
 import javax.servlet.annotation.WebServlet;
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
     name = "HelloAppEngine",
     urlPatterns = {"/hello"}
 )
-public class HelloAppEngine extends HttpServlet {
+public class TinyTwitt extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
