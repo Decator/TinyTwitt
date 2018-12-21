@@ -14,7 +14,7 @@ import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
 
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
-public class User {
+public class UserEntity {
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	Long key;
@@ -31,7 +31,7 @@ public class User {
 	
 	@Persistent
 	@ApiResourceProperty(ignored=AnnotationBoolean.TRUE)
-	List<Message> timeline = new ArrayList<Message>();
+	List<MessageEntity> timeline = new ArrayList<MessageEntity>();
 	
 	public Long getKey() {
 		return this.key;
@@ -73,15 +73,15 @@ public class User {
 		this.following.add(key);
 	}
 	
-	public List<Message> getTimeline() {
+	public List<MessageEntity> getTimeline() {
 		return this.timeline;
 	}
 
-	public void setTimeline(List<Message> timeline) {
+	public void setTimeline(List<MessageEntity> timeline) {
 		this.timeline = timeline;
 	}
 	
-	public void ajoutTimeline(Message message) {
+	public void ajoutTimeline(MessageEntity message) {
 		this.timeline.add(message);
 	}
 }
