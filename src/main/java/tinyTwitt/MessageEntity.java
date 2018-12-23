@@ -1,5 +1,7 @@
 package tinyTwitt;
 
+import java.util.Date;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -10,25 +12,47 @@ import javax.jdo.annotations.IdentityType;
 public class MessageEntity {
 	@PrimaryKey
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
-	Long key;
+	Long id;
 	
 	@Persistent
-	UserEntity sender;
+	String sender;
 	
 	@Persistent
 	String body;
 	
 	@Persistent
-	String date;
+	Date date;
 	
-	public void setKey(Long key) {
-		this.key = key;
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
-	public long getKey() {
-		return this.key;
+	public long getId() {
+		return this.id;
 	}
 	
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
 	
+	public String getSender() {
+		return this.sender;
+	}
+	
+	public void setBody(String body) {
+		this.body = body;
+	}
+	
+	public String getBody() {
+		return this.body;
+	}
+	
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
+	public Date getDate() {
+		return this.date;
+	}
 
 }
