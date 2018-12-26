@@ -8,6 +8,8 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.query.JDOCursorHelper;
 
 import javax.annotation.Nullable;
@@ -72,7 +74,7 @@ public class MessageEndpoint {
 	}
 
 	@ApiMethod(name = "addMessage")
-	public MessageEntity AddMessage(MessageEntity messageEntity) {
+	public MessageEntity addMessage(MessageEntity messageEntity) {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
 			if (containsMessageEntity(messageEntity)) {
@@ -100,14 +102,22 @@ public class MessageEndpoint {
 	}
 	
 	@ApiMethod(name = "removeMessageEntity")
-	public void removeMessageEntity(@Named("id") Long id) {
+	public void removeMessageEntity(@Named("id") Key id) {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
-			MessageEntity messageEntity = pmr.getObjectById(MessageEntity.class, id);
-			pmr.deletePersistent(messageEntity);
+			MessageEntity message = pmr.getObjectById(MessageEntity.class, id); 
+			Key indexMessage = KeyFactory.createKey(message.getId(), "MessageIndex", "index");
+			MessageIndexEntity messageIndex = pmr.getObjectById(MessageIndexEntity.class, indexMessage);
+			pmr.deletePersistent(message);
+			pmr.deletePersistent(messageIndex);
 		} finally {
 			pmr.close();
 		}
+	}
+	
+	@ApiMethod(name = "getMessageHashtags")
+	public List<MessageEntity> getMessageHashtags(String hashtag, Integer limit){
+		
 	}
 	
 	private boolean containsMessageEntity(MessageEntity messageEntity) {

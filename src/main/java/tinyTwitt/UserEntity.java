@@ -12,33 +12,34 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
+import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
 public class UserEntity {
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	Long key;
+	Key id;
 
 	@Persistent
 	String username;
 	
 	@Persistent 
-	Set<Long> followers = new HashSet<Long>();
+	Set<Key> followers = new HashSet<Key>();
 	
 	@Persistent
 	@ApiResourceProperty(ignored=AnnotationBoolean.TRUE)
-	Set<Long> following = new HashSet<Long>();
+	Set<Key> following = new HashSet<Key>();
 	
 	@Persistent
 	@ApiResourceProperty(ignored=AnnotationBoolean.TRUE)
-	List<MessageEntity> timeline = new ArrayList<MessageEntity>();
+	List<Key> timeline = new ArrayList<Key>();
 	
-	public Long getKey() {
-		return this.key;
+	public Key getId() {
+		return this.id;
 	}
 
-	public void setKey(Long key) {
-		this.key = key;
+	public void setId(Key id) {
+		this.id = id;
 	}
 	
 	public String getUsername() {
@@ -49,39 +50,39 @@ public class UserEntity {
 		this.username = username;
 	}
 
-	public Set<Long> getFollowers() {
+	public Set<Key> getFollowers() {
 		return this.followers;
 	}
 
-	public void setFollowers(Set<Long> followers) {
+	public void setFollowers(Set<Key> followers) {
 		this.followers = followers;
 	}
 
-	public Set<Long> getFollowing() {
+	public Set<Key> getFollowing() {
 		return this.following;
 	}
 
-	public void setFollowing(Set<Long> following) {
+	public void setFollowing(Set<Key> following) {
 		this.following = following;
 	}
 	
-	public void addFollower(Long key) {
-		this.followers.add(key);
+	public void addFollower(Key followerId) {
+		this.followers.add(followerId);
 	}
 
-	public void addFollowing(Long key) {
-		this.following.add(key);
+	public void addFollowing(Key followingId) {
+		this.following.add(followingId);
 	}
 	
-	public List<MessageEntity> getTimeline() {
+	public List<Key> getTimeline() {
 		return this.timeline;
 	}
 
-	public void setTimeline(List<MessageEntity> timeline) {
+	public void setTimeline(List<Key> timeline) {
 		this.timeline = timeline;
 	}
 	
-	public void ajoutTimeline(MessageEntity message) {
-		this.timeline.add(message);
+	public void addingTimeline(Key messageId) {
+		this.timeline.add(messageId);
 	}
 }

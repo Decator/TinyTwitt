@@ -6,13 +6,16 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.api.datastore.Key;
+
 import javax.jdo.annotations.IdentityType;
 
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
 public class MessageEntity {
 	@PrimaryKey
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key id;
 	
 	@Persistent
 	private String sender;
@@ -23,11 +26,11 @@ public class MessageEntity {
 	@Persistent
 	private Date date;
 	
-	public void setId(Long id) {
+	public void setId(Key id) {
 		this.id = id;
 	}
 	
-	public long getId() {
+	public Key getId() {
 		return this.id;
 	}
 	
