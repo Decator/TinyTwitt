@@ -12,16 +12,16 @@ import javax.jdo.annotations.IdentityType;
 public class MessageEntity {
 	@PrimaryKey
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
-	Long id;
+	private Long id;
 	
 	@Persistent
-	String sender;
+	private String sender;
 	
 	@Persistent
-	String body;
+	private String body;
 	
 	@Persistent
-	Date date;
+	private Date date;
 	
 	public void setId(Long id) {
 		this.id = id;
