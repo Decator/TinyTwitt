@@ -89,8 +89,8 @@ public class MessageEndpoint {
 	@ApiMethod(name = "addMessage")
 	public MessageEntity addMessage(@Named("userId") Key userId, @Named("body") String body, @Nullable @Named("hashtags") Set<String> hashtags) throws EntityExistsException {
 		PersistenceManager pmr = getPersistenceManager();
+		MessageEntity messageEntity = new MessageEntity();
 		try {
-			MessageEntity messageEntity = new MessageEntity();
 			UserEntity sender = pmr.getObjectById(UserEntity.class, userId);
 			messageEntity.setSender(sender.getUsername());
 			messageEntity.setBody(body);
