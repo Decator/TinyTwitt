@@ -1,15 +1,28 @@
 package tinyTwitt;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.datanucleus.query.JDOCursorHelper;
 
 import javax.annotation.Nullable;
@@ -62,7 +75,7 @@ public class MessageEndpoint {
 	
 	
 	@ApiMethod(name = "getMessageEntity")
-	public MessageEntity getMessageEntity(@Named("id") Long id) {
+	public MessageEntity getMessageEntity(@Named("id") Key id) {
 		PersistenceManager pmr = getPersistenceManager();
 		MessageEntity  messageEntity= null;
 		try {
@@ -74,13 +87,26 @@ public class MessageEndpoint {
 	}
 
 	@ApiMethod(name = "addMessage")
-	public MessageEntity addMessage(MessageEntity messageEntity) {
+	public MessageEntity addMessage(@Named("userId") Key userId, @Named("body") String body, @Nullable @Named("hashtags") Set<String> hashtags) throws EntityExistsException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
+			MessageEntity messageEntity = new MessageEntity();
+			UserEntity sender = pmr.getObjectById(UserEntity.class, userId);
+			messageEntity.setSender(sender.getUsername());
+			messageEntity.setBody(body);
+			messageEntity.setDate(new Date());
 			if (containsMessageEntity(messageEntity)) {
 				throw new EntityExistsException("Object already exists");
 			}
 			pmr.makePersistent(messageEntity);
+			Key keyIndex = KeyFactory.createKey(messageEntity.getId(), "MessageIndex", "index");
+			MessageIndexEntity messageIndex = new MessageIndexEntity();
+			messageIndex.setId(keyIndex);
+			messageIndex.setReceivers(sender.followers);
+			if (hashtags != null) {
+				messageIndex.setHashtags(hashtags);
+			}
+			pmr.makePersistent(messageIndex);
 		} finally {
 			pmr.close();
 		}
@@ -88,7 +114,7 @@ public class MessageEndpoint {
 	}
 	
 	@ApiMethod(name = "updateMessageEntity")
-	public MessageEntity updateMessageEntity(MessageEntity messageEntity) {
+	public MessageEntity updateMessageEntity(MessageEntity messageEntity) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
 			if (!containsMessageEntity(messageEntity)) {
@@ -105,7 +131,7 @@ public class MessageEndpoint {
 	public void removeMessageEntity(@Named("id") Key id) {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
-			MessageEntity message = pmr.getObjectById(MessageEntity.class, id); 
+			MessageEntity message = pmr.getObjectById(MessageEntity.class, id);
 			Key indexMessage = KeyFactory.createKey(message.getId(), "MessageIndex", "index");
 			MessageIndexEntity messageIndex = pmr.getObjectById(MessageIndexEntity.class, indexMessage);
 			pmr.deletePersistent(message);
@@ -116,8 +142,50 @@ public class MessageEndpoint {
 	}
 	
 	@ApiMethod(name = "getMessageHashtags")
-	public List<MessageEntity> getMessageHashtags(String hashtag, Integer limit){
-		
+	public Collection<Entity> getMessageHashtags(@Named ("hashtag") String hashtag){
+			DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+			Filter p = new FilterPredicate("hashtags", FilterOperator.EQUAL, hashtag);
+			com.google.appengine.api.datastore.Query q = new com.google.appengine.api.datastore.Query ("MessageIndexEntity").setFilter(p);
+			q.setKeysOnly();
+			PreparedQuery pq = ds.prepare(q);
+			List<Entity> results = pq.asList(FetchOptions.Builder.withLimit(10));
+			List<Key> pk = new ArrayList<Key>();
+			for (Entity r : results) {
+				pk.add(r.getParent());
+			}
+			Map<Key, Entity> map = ds.get(pk);
+			return map.values();
+	}
+	
+	@ApiMethod(name = "getMyMessages")
+	public List<Entity> getMyMessages(@Named("userId") Key userID){
+		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		Filter f = new FilterPredicate("sender", FilterOperator.EQUAL, userID);
+		com.google.appengine.api.datastore.Query q = new com.google.appengine.api.datastore.Query("MessageEntity").setFilter(f);
+		PreparedQuery pq= ds.prepare(q);
+		List<Entity> results=pq.asList(FetchOptions.Builder.withLimit(10));
+		return results;
+	}
+	
+	@ApiMethod(name = "followUser")
+	public void followUser (@Named("userId") Key userId, Key userToFollow) {
+		PersistenceManager pmr = getPersistenceManager();
+		try {
+			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollow))){
+				throw new EntityNotFoundException("Object does not exist");
+			}
+			UserEntity userFollowing = pmr.getObjectById(UserEntity.class, userId);
+			UserEntity userFollowed = pmr.getObjectById(UserEntity.class, userToFollow);
+			if (!userFollowing.following.contains(userToFollow) && !userFollowed.followers.contains(userId)) {
+				userFollowing.following.add(userToFollow);
+				userFollowed.followers.add(userId);
+			} else {
+				userFollowing.following.remove(userToFollow);
+				userFollowed.followers.remove(userId);
+			}
+		} finally {
+			pmr.close();
+		}
 	}
 	
 	private boolean containsMessageEntity(MessageEntity messageEntity) {
@@ -125,6 +193,19 @@ public class MessageEndpoint {
 		boolean contains = true;
 		try {
 			pmr.getObjectById(MessageEntity.class, messageEntity.getId());
+		} catch (javax.jdo.JDOObjectNotFoundException ex) {
+			contains = false;
+		} finally {
+			pmr.close();
+		}
+		return contains;
+	}
+	
+	private boolean containsUserEntity(UserEntity userEntity) {
+		PersistenceManager pmr = getPersistenceManager();
+		boolean contains = true;
+		try {
+			pmr.getObjectById(UserEntity.class, userEntity.getId());
 		} catch (javax.jdo.JDOObjectNotFoundException ex) {
 			contains = false;
 		} finally {

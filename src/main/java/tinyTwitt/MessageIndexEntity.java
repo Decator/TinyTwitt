@@ -1,6 +1,7 @@
 package tinyTwitt;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -17,10 +18,10 @@ public class MessageIndexEntity {
 	private Key id;
 	
 	@Persistent
-	List<Key> receivers;
+	Set<Key> receivers = new HashSet<Key>();
 	
 	@Persistent
-	List<String> hashtags;
+	Set<String> hashtags = new HashSet<String>();
 	
 	public void setId(Key id) {
 		this.id = id;
@@ -30,11 +31,11 @@ public class MessageIndexEntity {
 		return this.id;
 	}
 	
-	public void setReceivers(List<Key> receivers) {
+	public void setReceivers(Set<Key> receivers) {
 		this.receivers = receivers;
 	}
 	
-	public List<Key> getReceivers(){
+	public Set<Key> getReceivers(){
 		return this.receivers;
 	}
 	
@@ -46,11 +47,11 @@ public class MessageIndexEntity {
 		this.receivers.remove(idReceiver);
 	}
 	
-	public void setHashtags(List<String> hashtags) {
+	public void setHashtags(Set<String> hashtags) {
 		this.hashtags = hashtags;
 	}
 	
-	public List<String> getHashtags(){
+	public Set<String> getHashtags(){
 		return this.hashtags;
 	}
 	

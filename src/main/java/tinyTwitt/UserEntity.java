@@ -32,7 +32,7 @@ public class UserEntity {
 	
 	@Persistent
 	@ApiResourceProperty(ignored=AnnotationBoolean.TRUE)
-	List<Key> timeline = new ArrayList<Key>();
+	Set<Key> timeline = new HashSet<Key>();
 	
 	public Key getId() {
 		return this.id;
