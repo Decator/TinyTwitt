@@ -74,11 +74,11 @@ public class UserEntity {
 		this.following.add(followingId);
 	}
 	
-	public List<Key> getTimeline() {
+	public Set<Key> getTimeline() {
 		return this.timeline;
 	}
 
-	public void setTimeline(List<Key> timeline) {
+	public void setTimeline(Set<Key> timeline) {
 		this.timeline = timeline;
 	}
 	
