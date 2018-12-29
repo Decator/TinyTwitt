@@ -1,4 +1,4 @@
-package tinyTwitt;
+package tinyTwiit;
 
 import java.util.Date;
 

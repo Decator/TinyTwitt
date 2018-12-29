@@ -1,4 +1,4 @@
-package tinyTwitt;
+package tinyTwiit;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;

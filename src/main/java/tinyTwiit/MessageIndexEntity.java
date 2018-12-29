@@ -1,4 +1,4 @@
-package tinyTwitt;
+package tinyTwiit;
 
 import java.util.HashSet;
 import java.util.Set;
