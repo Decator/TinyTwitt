@@ -1,4 +1,4 @@
-package tinyTwitt;
+package com.TinyTwitt;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
     name = "HelloAppEngine",
     urlPatterns = {"/hello"}
 )
-public class TinyTwitt extends HttpServlet {
+public class HelloAppEngine extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -20,7 +20,7 @@ public class TinyTwitt extends HttpServlet {
     response.setContentType("text/plain");
     response.setCharacterEncoding("UTF-8");
 
-    response.getWriter().print("TinyTwitt!\r\n");
+    response.getWriter().print("Hello App Engine!\r\n");
 
   }
 }
