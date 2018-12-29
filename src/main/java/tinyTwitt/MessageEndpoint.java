@@ -1,4 +1,4 @@
-package tinyTwiit;
+package tinyTwitt;
 
 import java.util.ArrayList;
 import java.util.Collection;
