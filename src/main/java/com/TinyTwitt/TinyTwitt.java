@@ -7,11 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@SuppressWarnings("serial")
 @WebServlet(
-    name = "HelloAppEngine",
-    urlPatterns = {"/hello"}
+    name = "TinyTwitt",
+    urlPatterns = {"/twitt"}
 )
-public class HelloAppEngine extends HttpServlet {
+public class TinyTwitt extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -20,7 +21,7 @@ public class HelloAppEngine extends HttpServlet {
     response.setContentType("text/plain");
     response.setCharacterEncoding("UTF-8");
 
-    response.getWriter().print("Hello App Engine!\r\n");
+    response.getWriter().print("TinyTweet\r\n");
 
   }
 }

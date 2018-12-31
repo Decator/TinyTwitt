@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 // With @WebServlet annotation the webapp/WEB-INF/web.xml is no longer required.
+@SuppressWarnings("serial")
 @WebServlet(
     name = "UserAPI",
     description = "UserAPI: Login / Logout with UserService",
