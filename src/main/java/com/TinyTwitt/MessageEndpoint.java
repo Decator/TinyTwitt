@@ -32,7 +32,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-@Api(name = "MessageEndpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com"))
+@Api(name = "MessageEndpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com", packagePath = "messages"))
 
 public class MessageEndpoint {
 	
@@ -75,11 +75,15 @@ public class MessageEndpoint {
 	
 	
 	@ApiMethod(name = "getMessageEntity")
-	public MessageEntity getMessageEntity(@Named("id") Key id) {
+	public MessageEntity getMessageEntity(@Named("id") Key id) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		MessageEntity  messageEntity= null;
 		try {
-			messageEntity = pmr.getObjectById(MessageEntity.class, id);
+			if (containsMessageEntity(pmr.getObjectById(MessageEntity.class, id))) {
+				messageEntity = pmr.getObjectById(MessageEntity.class, id);
+			} else {
+				throw new EntityNotFoundException("Message does not exist !");
+			}
 		} finally {
 			pmr.close();
 		}
@@ -93,10 +97,11 @@ public class MessageEndpoint {
 		try {
 			UserEntity sender = pmr.getObjectById(UserEntity.class, userId);
 			messageEntity.setSender(sender.getUsername());
+			messageEntity.setOwner(userId);
 			messageEntity.setBody(body);
 			messageEntity.setDate(new Date());
 			if (containsMessageEntity(messageEntity)) {
-				throw new EntityExistsException("Object already exists");
+				throw new EntityExistsException("Message already exists");
 			}
 			pmr.makePersistent(messageEntity);
 			Key keyIndex = KeyFactory.createKey(messageEntity.getId(), "MessageIndex", "index");
@@ -118,7 +123,7 @@ public class MessageEndpoint {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
 			if (!containsMessageEntity(messageEntity)) {
-				throw new EntityNotFoundException("Object does not exist");
+				throw new EntityNotFoundException("Message does not exist");
 			} 
 			pmr.makePersistent(messageEntity);
 		} finally {
@@ -160,32 +165,11 @@ public class MessageEndpoint {
 	@ApiMethod(name = "getMyMessages")
 	public List<Entity> getMyMessages(@Named("userId") Key userID){
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		Filter f = new FilterPredicate("sender", FilterOperator.EQUAL, userID);
+		Filter f = new FilterPredicate("owner", FilterOperator.EQUAL, userID);
 		com.google.appengine.api.datastore.Query q = new com.google.appengine.api.datastore.Query("MessageEntity").setFilter(f);
 		PreparedQuery pq= ds.prepare(q);
 		List<Entity> results=pq.asList(FetchOptions.Builder.withLimit(10));
 		return results;
-	}
-	
-	@ApiMethod(name = "followUser")
-	public void followUser (@Named("userId") Key userId, Key userToFollow) {
-		PersistenceManager pmr = getPersistenceManager();
-		try {
-			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollow))){
-				throw new EntityNotFoundException("Object does not exist");
-			}
-			UserEntity userFollowing = pmr.getObjectById(UserEntity.class, userId);
-			UserEntity userFollowed = pmr.getObjectById(UserEntity.class, userToFollow);
-			if (!userFollowing.following.contains(userToFollow) && !userFollowed.followers.contains(userId)) {
-				userFollowing.following.add(userToFollow);
-				userFollowed.followers.add(userId);
-			} else {
-				userFollowing.following.remove(userToFollow);
-				userFollowed.followers.remove(userId);
-			}
-		} finally {
-			pmr.close();
-		}
 	}
 	
 	private boolean containsMessageEntity(MessageEntity messageEntity) {
@@ -193,19 +177,6 @@ public class MessageEndpoint {
 		boolean contains = true;
 		try {
 			pmr.getObjectById(MessageEntity.class, messageEntity.getId());
-		} catch (javax.jdo.JDOObjectNotFoundException ex) {
-			contains = false;
-		} finally {
-			pmr.close();
-		}
-		return contains;
-	}
-	
-	private boolean containsUserEntity(UserEntity userEntity) {
-		PersistenceManager pmr = getPersistenceManager();
-		boolean contains = true;
-		try {
-			pmr.getObjectById(UserEntity.class, userEntity.getId());
 		} catch (javax.jdo.JDOObjectNotFoundException ex) {
 			contains = false;
 		} finally {

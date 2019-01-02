@@ -21,6 +21,9 @@ public class MessageEntity {
 	private String sender;
 	
 	@Persistent
+	private Key owner;
+	
+	@Persistent
 	private String body;
 	
 	@Persistent
@@ -40,6 +43,14 @@ public class MessageEntity {
 	
 	public String getSender() {
 		return this.sender;
+	}
+	
+	public void setOwner(Key owner) {
+		this.owner = owner;
+	}
+	
+	public Key getOwner() {
+		return this.owner;
 	}
 	
 	public void setBody(String body) {

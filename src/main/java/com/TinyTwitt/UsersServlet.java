@@ -32,6 +32,7 @@ public class UsersServlet extends HttpServlet {
                   + "!  You can <a href=\""
                   + userService.createLogoutURL(thisUrl)
                   + "\">sign out</a>.</p>");
+      resp.getWriter().println("<p><a href=/twitt>Accessing TinyTwitt</a>!</p>");
     } else {
       resp.getWriter()
           .println(
