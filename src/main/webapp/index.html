@@ -1,33 +1,70 @@
 <!DOCTYPE html>
 <html ng-app="tinyTwitt">
-  <head>
-    <meta name="google-signin-client_id" content="397375665310-4284tn7rnhrjug221hmvmphecikokj6c.apps.googleusercontent.com">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    
-    <script src="script.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+	<head>
+		<!-- <meta name="google-signin-client_id" content="397375665310-4284tn7rnhrjug221hmvmphecikokj6c.apps.googleusercontent.com"> -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+			integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+			crossorigin="anonymous">
+		
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+			crossorigin="anonymous"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+			integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+			crossorigin="anonymous"></script>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+			integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+			crossorigin="anonymous"></script>
+		
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
+		
+		<script src="script.js"></script>
+		
+		<title>TinyTwitt</title>
+	</head>
 	
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
-    <title>TinyTwitt</title>
-  </head>
-
-  <body ng-controller="Controller">
-	<nav class="navbar navbarStyle">
-		<div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
-		<h1>TinyTwitt</h1>
-	</nav>
-    
-    <table>
-      <tr>
-        <td><a href='/userapi'>Welcome</a></td>
-      </tr>
-    </table>
-  </body>
+	<body ng-app="tinyTwitt">
+		<div ng-controller="Controller">
+			<nav class="navbar navbarStyle">
+				<!-- <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div> -->
+				<h1>TinyTwitt</h1>
+			</nav>
+	
+			<table>
+				<tr>
+					<td><a href='/userapi'>Welcome</a></td>
+				</tr>
+			</table>
+	
+			<button ng-click="myFunc()">OK</button>
+			<p>The button has been clicked {{count}} times.</p>
+	
+			<br/>
+			
+			<form novalidate class="simple-form">
+	    		<label>Quoi de neuf ?  </label><br />
+	    		<input type="text" ng-model="body" />
+	    		<input type="submit" ng-click="addMessage(body)" value="Save" />
+	  		</form>
+	  		
+	  		<br/>
+	  		
+	  		<div ng-repeat="message in messages">
+	  			<label>Id : {{message.id}}</label><br/>
+	  			<label>Sender : {{message.sender}}</label><br/>
+	  			<label>Owner : {{message.owner}}</label><br/>
+	  			<label>Body : {{message.body}}</label><br/>
+	  			<label>Date : {{message.date}}</label><br/><br/>
+	  		</div>
+		</div>
+	</body>
 </html>
