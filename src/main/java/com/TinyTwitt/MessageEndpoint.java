@@ -35,7 +35,6 @@ import javax.jdo.Query;
 import com.TinyTwitt.PMF;
 
 @Api(name = "MessageEndpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com", packagePath = "messages"))
-
 public class MessageEndpoint {
 	
 	@SuppressWarnings({"unchecked", "unused"})
