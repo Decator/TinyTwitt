@@ -60,6 +60,21 @@
 <artifactId>endpoints-framework</artifactId>
 <version>2.2.1</version>
 </dependency>
+<dependency>
+    <groupId>com.google.appengine</groupId>
+    <artifactId>appengine-endpoints-deps</artifactId>
+    <version>1.8.8</version>
+</dependency>
+<dependency>
+    <groupId>com.google.appengine.orm</groupId>
+    <artifactId>datanucleus-appengine</artifactId>
+    <version>2.1.2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.geronimo.specs</groupId>
+    <artifactId>geronimo-jpa_2.0_spec</artifactId>
+    <version>1.0</version>
+</dependency>
 <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>
