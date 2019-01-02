@@ -12,6 +12,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.TinyTwitt.PMF;
 
 @SuppressWarnings("serial")
 @WebServlet(
@@ -32,5 +33,8 @@ public class TinyTwitt extends HttpServlet {
     response.getWriter().println("pouet");
     Key userId = KeyFactory.createKey("User", userService.getCurrentUser().getUserId());
     UserEndpoint userEndpoint = new UserEndpoint();
+    UserEntity user = new UserEntity();
+    
+    
   }
 }

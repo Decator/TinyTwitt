@@ -10,6 +10,8 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.appengine.api.datastore.Key;
 
+import com.TinyTwitt.PMF;
+
 @Api(name = "UserEndpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com", packagePath = "users"))
 public class UserEndpoint {
 	
@@ -32,7 +34,7 @@ public class UserEndpoint {
 	}
 	
 	@ApiMethod(name = "getUser")
-	public UserEntity getUser(@Named("userId") Key userId) {
+	public UserEntity getUser(@Named("userId") Key userId) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		UserEntity userEntity = null;
 		try {
@@ -48,7 +50,7 @@ public class UserEndpoint {
 	}
 	
 	@ApiMethod(name = "followUser")
-	public void followUser (@Named("userId") Key userId, Key userToFollow) {
+	public void followUser (@Named("userId") Key userId, Key userToFollow) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
 			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollow))){
