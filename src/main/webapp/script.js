@@ -48,9 +48,8 @@ app.controller('mainCtrl', ['$scope', '$window', function($scope, $window) {
 }]);
 
 app.controller('twittCtrl', ['$scope', '$window', function($scope, $window) {
-    
+	
 }]);
-
 
 /*function onSuccess(googleUser) {
 	var profile = googleUser.getBasicProfile();
@@ -72,8 +71,3 @@ function signOut() {
     document.location.href="#";
   });
 }
-
-var init = function() {
-	console.log("init called");
-	window.init();
-};
