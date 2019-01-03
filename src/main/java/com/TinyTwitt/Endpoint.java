@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.datastore.Cursor;
@@ -34,11 +35,11 @@ import javax.jdo.Query;
 
 import com.TinyTwitt.PMF;
 
-@Api(name = "MessageEndpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com", packagePath = "messages"))
-public class MessageEndpoint {
+@Api(name = "Endpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com", packagePath = "messages"))
+public class Endpoint {
 	
 	@SuppressWarnings({"unchecked", "unused"})
-	@ApiMethod(name = "getTimeline")
+	@ApiMethod(name = "getTimeline", httpMethod = HttpMethod.GET, path = "users/self/timeline")
 	public CollectionResponse<MessageEntity> getTimeline(
 			@Nullable @Named("cursor") String cursorString,
 			@Nullable @Named ("limit") Integer limit) {
@@ -74,7 +75,7 @@ public class MessageEndpoint {
 				.setNextPageToken(cursorString).build();
 	}
 	
-	@ApiMethod(name = "getTest")
+	@ApiMethod(name = "getTest", httpMethod = HttpMethod.GET, path = "test")
 	public String getTest() throws EntityNotFoundException {
 //		PersistenceManager pmr = getPersistenceManager();
 //		MessageEntity  messageEntity= null;
@@ -91,7 +92,7 @@ public class MessageEndpoint {
 	}
 	
 	
-	@ApiMethod(name = "getMessageEntity")
+	@ApiMethod(name = "getMessageEntity", httpMethod = HttpMethod.GET, path = "messages/${id}")
 	public MessageEntity getMessageEntity(@Named("id") Key id) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		MessageEntity  messageEntity= null;
@@ -107,7 +108,7 @@ public class MessageEndpoint {
 		return messageEntity;
 	}
 
-	@ApiMethod(name = "addMessage")
+	@ApiMethod(name = "addMessage", httpMethod = HttpMethod.POST, path = "messages")
 	public MessageEntity addMessage(@Named("userId") Key userId, @Named("body") String body, @Nullable @Named("hashtags") Set<String> hashtags) throws EntityExistsException {
 		PersistenceManager pmr = getPersistenceManager();
 		MessageEntity messageEntity = new MessageEntity();
@@ -135,7 +136,7 @@ public class MessageEndpoint {
 		return messageEntity;
 	}
 	
-	@ApiMethod(name = "updateMessageEntity")
+	@ApiMethod(name = "updateMessageEntity", httpMethod = HttpMethod.PUT, path = "messages/${id}")
 	public MessageEntity updateMessageEntity(MessageEntity messageEntity) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
@@ -149,7 +150,7 @@ public class MessageEndpoint {
 		return messageEntity;
 	}
 	
-	@ApiMethod(name = "removeMessageEntity")
+	@ApiMethod(name = "removeMessageEntity", httpMethod = HttpMethod.DELETE, path = "messages/${id}")
 	public void removeMessageEntity(@Named("id") Key id) {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
@@ -163,7 +164,7 @@ public class MessageEndpoint {
 		}
 	}
 	
-	@ApiMethod(name = "getMessageHashtags")
+	@ApiMethod(name = "getMessageHashtags", httpMethod = HttpMethod.GET, path = "messages/${hashtag}")
 	public Collection<Entity> getMessageHashtags(@Named ("hashtag") String hashtag){
 			DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 			Filter p = new FilterPredicate("hashtags", FilterOperator.EQUAL, hashtag);
@@ -179,7 +180,7 @@ public class MessageEndpoint {
 			return map.values();
 	}
 	
-	@ApiMethod(name = "getMyMessages")
+	@ApiMethod(name = "getMyMessages", httpMethod = HttpMethod.GET, path = "users/self/messages")
 	public List<Entity> getMyMessages(@Named("userId") Key userID){
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		Filter f = new FilterPredicate("owner", FilterOperator.EQUAL, userID);
@@ -194,6 +195,74 @@ public class MessageEndpoint {
 		boolean contains = true;
 		try {
 			pmr.getObjectById(MessageEntity.class, messageEntity.getId());
+		} catch (javax.jdo.JDOObjectNotFoundException ex) {
+			contains = false;
+		} finally {
+			pmr.close();
+		}
+		return contains;
+	}
+	
+	@SuppressWarnings({ "null" })
+	@ApiMethod(name = "addUser", httpMethod = HttpMethod.POST, path = "users")
+	public UserEntity addUser(@Named("userId") Key userId, @Named("username") String username) throws EntityExistsException {
+		PersistenceManager pmr = getPersistenceManager();
+		UserEntity userEntity = null;
+		try {
+			userEntity.setId(userId);
+			userEntity.setUsername(username);
+			if (containsUserEntity(userEntity)) {
+				throw new EntityExistsException("User already exists");
+			}
+			pmr.makePersistent(userEntity);
+		} finally {
+			pmr.close();
+		}
+		return userEntity;
+	}
+	
+	@ApiMethod(name = "getUser", httpMethod = HttpMethod.GET, path = "users/${id}")
+	public UserEntity getUser(@Named("userId") Key userId) throws EntityNotFoundException {
+		PersistenceManager pmr = getPersistenceManager();
+		UserEntity userEntity = null;
+		try {
+			if (containsUserEntity(pmr.getObjectById(UserEntity.class, userId))) {
+				userEntity = pmr.getObjectById(UserEntity.class, userId);
+			} else {
+				throw new EntityNotFoundException("User does not exist !");
+			}
+		} finally {
+			pmr.close();
+		}
+		return userEntity;
+	} 
+	
+	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/${id}")
+	public void followUser (@Named("userId") Key userId, Key userToFollow) throws EntityNotFoundException {
+		PersistenceManager pmr = getPersistenceManager();
+		try {
+			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollow))){
+				throw new EntityNotFoundException("Object does not exist");
+			}
+			UserEntity userFollowing = pmr.getObjectById(UserEntity.class, userId);
+			UserEntity userFollowed = pmr.getObjectById(UserEntity.class, userToFollow);
+			if (!userFollowing.following.contains(userToFollow) && !userFollowed.followers.contains(userId)) {
+				userFollowing.following.add(userToFollow);
+				userFollowed.followers.add(userId);
+			} else {
+				userFollowing.following.remove(userToFollow);
+				userFollowed.followers.remove(userId);
+			}
+		} finally {
+			pmr.close();
+		}
+	}
+	
+	private boolean containsUserEntity(UserEntity userEntity) {
+		PersistenceManager pmr = getPersistenceManager();
+		boolean contains = true;
+		try {
+			pmr.getObjectById(UserEntity.class, userEntity.getId());
 		} catch (javax.jdo.JDOObjectNotFoundException ex) {
 			contains = false;
 		} finally {
