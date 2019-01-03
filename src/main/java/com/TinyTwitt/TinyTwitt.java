@@ -1,6 +1,7 @@
 package com.TinyTwitt;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.annotation.WebServlet;
@@ -25,16 +26,22 @@ public class TinyTwitt extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws IOException {
 
-    response.setContentType("text/plain");
-    response.setCharacterEncoding("UTF-8");
-    response.getWriter().print("TinyTweet\r\n");
     UserService userService = UserServiceFactory.getUserService();
-    response.getWriter().println(userService.getCurrentUser().getUserId());
-    response.getWriter().println("pouet");
+    PrintWriter out = response.getWriter();
+	response.setContentType("text/html; charset=UTF-8");
+	
+    out.println("<!DOCTYPE html>");
+    out.println("<html><head>");
+    out.println("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
+    out.println("<script src=\"script.js\"></script>");
+    out.println("<title>TinyTwitt</title></head><body>");
+    out.println("<a href=\"#\" onclick=\"signOut();\">Sign out</a>");
+    out.println(userService.getCurrentUser().getUserId());
+    out.println("</body></html>");
+    
+    
     Key userId = KeyFactory.createKey("User", userService.getCurrentUser().getUserId());
     UserEndpoint userEndpoint = new UserEndpoint();
     UserEntity user = new UserEntity();
-    
-    
   }
 }

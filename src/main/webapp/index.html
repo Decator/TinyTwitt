@@ -4,49 +4,19 @@
 		<meta charset="utf-8">
 		<meta name="google-signin-client_id" content="130406548295-9nsud3halu7p1rt4ubu45vsv7osg320g.apps.googleusercontent.com">
 		
-		<link rel="stylesheet" href="web/css/style.css">
+		<link rel="stylesheet" href="style.css">
 		<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
-		
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.min.js"></script>
-		<script src="https://apis.google.com/js/platform.js" async defer></script>
-		<script src="js/script.js"></script>
 		
 		<title>TinyTwitt</title>
 	</head>
 	
 	<body>
-		<div ng-view>
-        </div>
-        <nav>
-            <a href="#/home" class="btn btn-primary">Page d'accueil</a>
-            <a href="#/twitt" class="btn btn-success">Page de contact</a>
-        </nav>
-			<h1>TinyTwitt</h1>
-			
-			<div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure"></div>
-			<a href="#" onclick="signOut();">Sign out</a>
-			
-			<button ng-click="myFunc()">OK</button>
-			<p>The button has been clicked {{count}} times.</p>
-	
-			<br/>
-			
-			<form novalidate class="simple-form">
-	    		<label>Quoi de neuf ?  </label><br />
-	    		<input type="text" ng-model="body" />
-	    		<input type="submit" ng-click="addMessage(body)" value="Save" />
-	  		</form>
-	  		
-	  		<br/>
-	  		
-	  		<div ng-repeat="message in messages">
-	  			<label>Id : {{message.id}}</label><br/>
-	  			<label>Sender : {{message.sender}}</label><br/>
-	  			<label>Owner : {{message.owner}}</label><br/>
-	  			<label>Body : {{message.body}}</label><br/>
-	  			<label>Date : {{message.date}}</label><br/><br/>
-	  		</div>
-		</div>
+		<h1>TinyTwitt</h1>
+		<div ng-view></div>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
+		<script src="script.js"></script>
 	</body>
 </html>
