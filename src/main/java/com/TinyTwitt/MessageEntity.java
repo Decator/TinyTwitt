@@ -11,17 +11,19 @@ import com.google.appengine.api.datastore.Key;
 
 import javax.jdo.annotations.IdentityType;
 
+import com.TinyTwitt.PMF;
+
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
 public class MessageEntity {
 	@PrimaryKey
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	private String id;
 	
 	@Persistent
 	private String sender;
 	
 	@Persistent
-	private Key owner;
+	private String owner;
 	
 	@Persistent
 	private String body;
@@ -29,11 +31,11 @@ public class MessageEntity {
 	@Persistent
 	private Date date;
 	
-	public void setId(Key id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
-	public Key getId() {
+	public String getId() {
 		return this.id;
 	}
 	
@@ -45,11 +47,11 @@ public class MessageEntity {
 		return this.sender;
 	}
 	
-	public void setOwner(Key owner) {
-		this.owner = owner;
+	public void setOwner(String userId) {
+		this.owner = userId;
 	}
 	
-	public Key getOwner() {
+	public String getOwner() {
 		return this.owner;
 	}
 	

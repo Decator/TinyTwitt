@@ -10,33 +10,34 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Key;
+
+import com.TinyTwitt.PMF;
 
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
 public class UserEntity {
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	Key id;
+	String id;
 
 	@Persistent
 	String username;
 	
 	@Persistent 
-	Set<Key> followers = new HashSet<Key>();
+	Set<String> followers = new HashSet<String>();
 	
 	@Persistent
 	@ApiResourceProperty(ignored=AnnotationBoolean.TRUE)
-	Set<Key> following = new HashSet<Key>();
+	Set<String> following = new HashSet<String>();
 	
 	@Persistent
 	@ApiResourceProperty(ignored=AnnotationBoolean.TRUE)
-	Set<Key> timeline = new HashSet<Key>();
+	Set<String> timeline = new HashSet<String>();
 	
-	public Key getId() {
+	public String getId() {
 		return this.id;
 	}
 
-	public void setId(Key id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
@@ -48,39 +49,39 @@ public class UserEntity {
 		this.username = username;
 	}
 
-	public Set<Key> getFollowers() {
+	public Set<String> getFollowers() {
 		return this.followers;
 	}
 
-	public void setFollowers(Set<Key> followers) {
+	public void setFollowers(Set<String> followers) {
 		this.followers = followers;
 	}
 
-	public Set<Key> getFollowing() {
+	public Set<String> getFollowing() {
 		return this.following;
 	}
 
-	public void setFollowing(Set<Key> following) {
+	public void setFollowing(Set<String> following) {
 		this.following = following;
 	}
 	
-	public void addFollower(Key followerId) {
+	public void addFollower(String followerId) {
 		this.followers.add(followerId);
 	}
 
-	public void addFollowing(Key followingId) {
+	public void addFollowing(String followingId) {
 		this.following.add(followingId);
 	}
 	
-	public Set<Key> getTimeline() {
+	public Set<String> getTimeline() {
 		return this.timeline;
 	}
 
-	public void setTimeline(Set<Key> timeline) {
+	public void setTimeline(Set<String> timeline) {
 		this.timeline = timeline;
 	}
 	
-	public void addingTimeline(Key messageId) {
+	public void addingTimeline(String messageId) {
 		this.timeline.add(messageId);
 	}
 }

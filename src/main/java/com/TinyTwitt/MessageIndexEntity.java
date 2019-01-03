@@ -11,39 +11,41 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 
+import com.TinyTwitt.PMF;
+
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
 public class MessageIndexEntity {
 	@PrimaryKey
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	private String id;
 	
 	@Persistent
-	Set<Key> receivers = new HashSet<Key>();
+	Set<String> receivers = new HashSet<String>();
 	
 	@Persistent
 	Set<String> hashtags = new HashSet<String>();
 	
-	public void setId(Key id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
-	public Key getId() {
+	public String getId() {
 		return this.id;
 	}
 	
-	public void setReceivers(Set<Key> receivers) {
+	public void setReceivers(Set<String> receivers) {
 		this.receivers = receivers;
 	}
 	
-	public Set<Key> getReceivers(){
+	public Set<String> getReceivers(){
 		return this.receivers;
 	}
 	
-	public void addReceiver(Key idReceiver) {
+	public void addReceiver(String idReceiver) {
 		this.receivers.add(idReceiver);
 	}
 	
-	public void removeReceiver(Key idReceiver) {
+	public void removeReceiver(String idReceiver) {
 		this.receivers.remove(idReceiver);
 	}
 	

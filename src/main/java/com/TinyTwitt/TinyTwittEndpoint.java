@@ -41,6 +41,7 @@ public class TinyTwittEndpoint {
 	/*@SuppressWarnings({"unchecked", "unused"})
 	@ApiMethod(name = "getTimeline", httpMethod = HttpMethod.GET, path = "users/self/timeline")
 	public CollectionResponse<MessageEntity> getTimeline(
+			@Named("userId") String userId,
 			@Nullable @Named("cursor") String cursorString,
 			@Nullable @Named ("limit") Integer limit) {
 		PersistenceManager pmr = null;
@@ -85,25 +86,9 @@ public class TinyTwittEndpoint {
 		return new HelloClass(name);
 	}
 	
-	
-	/*@ApiMethod(name = "getMessageEntity", httpMethod = HttpMethod.GET, path = "messages/${id}")
-	public MessageEntity getMessageEntity(@Named("id") Key id) throws EntityNotFoundException {
-		PersistenceManager pmr = getPersistenceManager();
-		MessageEntity  messageEntity= null;
-		try {
-			if (containsMessageEntity(pmr.getObjectById(MessageEntity.class, id))) {
-				messageEntity = pmr.getObjectById(MessageEntity.class, id);
-			} else {
-				throw new EntityNotFoundException("Message does not exist !");
-			}
-		} finally {
-			pmr.close();
-		}
-		return messageEntity;
-	}
 
 	@ApiMethod(name = "addMessage", httpMethod = HttpMethod.POST, path = "messages")
-	public MessageEntity addMessage(@Named("userId") Key userId, @Named("body") String body, @Nullable @Named("hashtags") Set<String> hashtags) throws EntityExistsException {
+	public MessageEntity addMessage(@Named("userId") String userId, @Named("body") String body, @Nullable @Named("hashtags") Set<String> hashtags) throws EntityExistsException {
 		PersistenceManager pmr = getPersistenceManager();
 		MessageEntity messageEntity = new MessageEntity();
 		try {
@@ -116,7 +101,7 @@ public class TinyTwittEndpoint {
 				throw new EntityExistsException("Message already exists");
 			}
 			pmr.makePersistent(messageEntity);
-			Key keyIndex = KeyFactory.createKey(messageEntity.getId(), "MessageIndex", "index");
+			String keyIndex = KeyFactory.createKeyString(messageEntity.getId(),"MessageIndex");
 			MessageIndexEntity messageIndex = new MessageIndexEntity();
 			messageIndex.setId(keyIndex);
 			messageIndex.setReceivers(sender.followers);
@@ -129,8 +114,20 @@ public class TinyTwittEndpoint {
 		}
 		return messageEntity;
 	}
+
+	@ApiMethod(name = "getMessageEntity", httpMethod = HttpMethod.GET, path = "messages/$id")
+	public MessageEntity getMessageEntity(@Named("id") String id) throws EntityNotFoundException {
+		PersistenceManager pmr = getPersistenceManager();
+		MessageEntity messageEntity = null;
+		try {
+			messageEntity = pmr.getObjectById(MessageEntity.class, id);
+		} finally {
+			pmr.close();
+		}
+		return messageEntity;
+	}
 	
-	@ApiMethod(name = "updateMessageEntity", httpMethod = HttpMethod.PUT, path = "messages/${id}")
+	@ApiMethod(name = "updateMessageEntity", httpMethod = HttpMethod.PUT, path = "messages")
 	public MessageEntity updateMessageEntity(MessageEntity messageEntity) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
@@ -144,12 +141,12 @@ public class TinyTwittEndpoint {
 		return messageEntity;
 	}
 	
-	@ApiMethod(name = "removeMessageEntity", httpMethod = HttpMethod.DELETE, path = "messages/${id}")
-	public void removeMessageEntity(@Named("id") Key id) {
+	@ApiMethod(name = "removeMessageEntity", httpMethod = HttpMethod.DELETE, path = "messages/id")
+	public void removeMessageEntity(@Named("id") String id) {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
 			MessageEntity message = pmr.getObjectById(MessageEntity.class, id);
-			Key indexMessage = KeyFactory.createKey(message.getId(), "MessageIndex", "index");
+			String indexMessage = KeyFactory.createKeyString(message.getId(), "MessageIndex");
 			MessageIndexEntity messageIndex = pmr.getObjectById(MessageIndexEntity.class, indexMessage);
 			pmr.deletePersistent(message);
 			pmr.deletePersistent(messageIndex);
@@ -158,7 +155,7 @@ public class TinyTwittEndpoint {
 		}
 	}
 	
-	@ApiMethod(name = "getMessageHashtags", httpMethod = HttpMethod.GET, path = "messages/${hashtag}")
+	@ApiMethod(name = "getMessageHashtags", httpMethod = HttpMethod.GET, path = "messages/hashtag")
 	public Collection<Entity> getMessageHashtags(@Named ("hashtag") String hashtag){
 			DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 			Filter p = new FilterPredicate("hashtags", FilterOperator.EQUAL, hashtag);
@@ -175,7 +172,7 @@ public class TinyTwittEndpoint {
 	}
 	
 	@ApiMethod(name = "getMyMessages", httpMethod = HttpMethod.GET, path = "users/self/messages")
-	public List<Entity> getMyMessages(@Named("userId") Key userID){
+	public List<Entity> getMyMessages(@Named("userId") String userID){
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		Filter f = new FilterPredicate("owner", FilterOperator.EQUAL, userID);
 		com.google.appengine.api.datastore.Query q = new com.google.appengine.api.datastore.Query("MessageEntity").setFilter(f);
@@ -199,7 +196,7 @@ public class TinyTwittEndpoint {
 	
 	@SuppressWarnings({ "null" })
 	@ApiMethod(name = "addUser", httpMethod = HttpMethod.POST, path = "users")
-	public UserEntity addUser(@Named("userId") Key userId, @Named("username") String username) throws EntityExistsException {
+	public UserEntity addUser(@Named("userId") String userId, @Named("username") String username) throws EntityExistsException {
 		PersistenceManager pmr = getPersistenceManager();
 		UserEntity userEntity = null;
 		try {
@@ -216,15 +213,11 @@ public class TinyTwittEndpoint {
 	}
 	
 	@ApiMethod(name = "getUser", httpMethod = HttpMethod.GET, path = "users/${id}")
-	public UserEntity getUser(@Named("userId") Key userId) throws EntityNotFoundException {
+	public UserEntity getUser(@Named("userId") String userId) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		UserEntity userEntity = null;
 		try {
-			if (containsUserEntity(pmr.getObjectById(UserEntity.class, userId))) {
-				userEntity = pmr.getObjectById(UserEntity.class, userId);
-			} else {
-				throw new EntityNotFoundException("User does not exist !");
-			}
+			userEntity = pmr.getObjectById(UserEntity.class, userId);
 		} finally {
 			pmr.close();
 		}
@@ -232,7 +225,7 @@ public class TinyTwittEndpoint {
 	} 
 	
 	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/${id}")
-	public void followUser (@Named("userId") Key userId, Key userToFollow) throws EntityNotFoundException {
+	public void followUser (@Named("userId") String userId, String userToFollow) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
 			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollow))){
@@ -267,5 +260,5 @@ public class TinyTwittEndpoint {
 	
 	private static PersistenceManager getPersistenceManager() {
 		return PMF.get().getPersistenceManager();
-	}*/
+	}
 }

@@ -40,7 +40,7 @@ public class TinyTwitt extends HttpServlet {
     out.println("</body></html>");
     
     
-    Key userId = KeyFactory.createKey("User", userService.getCurrentUser().getUserId());
+    String userId = userService.getCurrentUser().getUserId();
     TinyTwittEndpoint endpoint = new TinyTwittEndpoint();
     UserEntity user = new UserEntity();
   }
