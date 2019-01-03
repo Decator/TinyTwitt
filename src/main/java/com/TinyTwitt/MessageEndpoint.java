@@ -74,6 +74,22 @@ public class MessageEndpoint {
 				.setNextPageToken(cursorString).build();
 	}
 	
+	@ApiMethod(name = "getTest")
+	public String getTest() throws EntityNotFoundException {
+//		PersistenceManager pmr = getPersistenceManager();
+//		MessageEntity  messageEntity= null;
+//		try {
+//			if (containsMessageEntity(pmr.getObjectById(MessageEntity.class, id))) {
+//				messageEntity = pmr.getObjectById(MessageEntity.class, id);
+//			} else {
+//				throw new EntityNotFoundException("Message does not exist !");
+//			}
+//		} finally {
+//			pmr.close();
+//		}
+		return "test ok";
+	}
+	
 	
 	@ApiMethod(name = "getMessageEntity")
 	public MessageEntity getMessageEntity(@Named("id") Key id) throws EntityNotFoundException {
