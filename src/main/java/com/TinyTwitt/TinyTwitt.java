@@ -41,7 +41,7 @@ public class TinyTwitt extends HttpServlet {
     
     
     Key userId = KeyFactory.createKey("User", userService.getCurrentUser().getUserId());
-    Endpoint endpoint = new Endpoint();
+    TinyTwittEndpoint endpoint = new TinyTwittEndpoint();
     UserEntity user = new UserEntity();
   }
 }

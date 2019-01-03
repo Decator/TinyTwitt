@@ -35,10 +35,10 @@ import javax.jdo.Query;
 
 import com.TinyTwitt.PMF;
 
-@Api(name = "Endpoint", namespace = @ApiNamespace(ownerDomain = "TinyTweet.com", ownerName = "TinyTweet.com", packagePath = "messages"))
-public class Endpoint {
+@Api(name = "tinytwittendpoint", namespace = @ApiNamespace(ownerDomain = "TinyTwitt.com", ownerName = "TinyTwitt.com", packagePath = "services"))
+public class TinyTwittEndpoint {
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	/*@SuppressWarnings({"unchecked", "unused"})
 	@ApiMethod(name = "getTimeline", httpMethod = HttpMethod.GET, path = "users/self/timeline")
 	public CollectionResponse<MessageEntity> getTimeline(
 			@Nullable @Named("cursor") String cursorString,
@@ -73,26 +73,20 @@ public class Endpoint {
 		
 		return CollectionResponse.<MessageEntity> builder().setItems(execute)
 				.setNextPageToken(cursorString).build();
+	}*/
+	
+	@ApiMethod(name = "sayHello", httpMethod = HttpMethod.GET, path = "sayHello")
+	public HelloClass sayHello() throws EntityNotFoundException {
+		return new HelloClass();
 	}
 	
-	@ApiMethod(name = "getTest", httpMethod = HttpMethod.GET, path = "test")
-	public String getTest() throws EntityNotFoundException {
-//		PersistenceManager pmr = getPersistenceManager();
-//		MessageEntity  messageEntity= null;
-//		try {
-//			if (containsMessageEntity(pmr.getObjectById(MessageEntity.class, id))) {
-//				messageEntity = pmr.getObjectById(MessageEntity.class, id);
-//			} else {
-//				throw new EntityNotFoundException("Message does not exist !");
-//			}
-//		} finally {
-//			pmr.close();
-//		}
-		return "test ok";
+	@ApiMethod(name = "sayHelloByName", httpMethod = HttpMethod.GET, path = "sayHelloByName")
+	public HelloClass sayHelloByName(@Named("name") String name) {
+		return new HelloClass(name);
 	}
 	
 	
-	@ApiMethod(name = "getMessageEntity", httpMethod = HttpMethod.GET, path = "messages/${id}")
+	/*@ApiMethod(name = "getMessageEntity", httpMethod = HttpMethod.GET, path = "messages/${id}")
 	public MessageEntity getMessageEntity(@Named("id") Key id) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		MessageEntity  messageEntity= null;
@@ -273,5 +267,5 @@ public class Endpoint {
 	
 	private static PersistenceManager getPersistenceManager() {
 		return PMF.get().getPersistenceManager();
-	}
+	}*/
 }
