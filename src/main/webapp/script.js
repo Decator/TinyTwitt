@@ -16,20 +16,42 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 app.controller('mainCtrl', ['$scope', '$window', function($scope, $window) {
-	$scope.count = 0;
 	
-	$scope.myFunc = function() {
-		$scope.count++;
-	}
+	$scope.user = null;
+	$scope.messages = [];
 	
 	$scope.listMyMessages = function() {
 		console.log("list messages");
-		//console.log(gapi);
-        gapi.client.MessageEndpoint.sayHello().execute(
+        gapi.client.tinytwittendpoint.sayHello().execute(
           function(resp) {
             console.log(resp);
           }
         );
+    };
+    
+    $window.onSuccess = function(googleUser) {
+    	console.log("okok");
+    	console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+    	$scope.profile = googleUser.getBasicProfile();
+    	console.log($scope.profile);
+    	
+    	gapi.client.tinytwittendpoint.getUser($scope.profile.getId()).execute(
+          function(resp) {
+            console.log(resp);
+            if(resp == null){
+            	gapi.client.tinytwittendpoint.addUser($scope.profile.getId(), $scope.profile.getName()).execute(
+            		function(resp) {
+            			console.log(resp);
+            			$scope.user = resp;
+            		}
+            	);
+            } else {
+            	$scope.user = resp;
+            }
+          }
+        );
+    	
+    	window.location.href = "#!twitt";
     };
     
     // little hack to be sure that apis.google.com/js/client.js is loaded
@@ -38,17 +60,13 @@ app.controller('mainCtrl', ['$scope', '$window', function($scope, $window) {
     $window.init = function() {
 	    console.log("windowinit called");
 	    var rootApi = 'https://tinytwitt-227514.appspot.com/_ah/api/';
-	    gapi.client.load('MessageEndpoint', 'v1', function() {
+	    gapi.client.load('tinytwittendpoint', 'v1', function() {
 	    	console.log("message api loaded");
 	    	$scope.listMyMessages();
 	    }, rootApi);
 
         //gapi.load('auth2', initSigninV2);
     }
-}]);
-
-app.controller('twittCtrl', ['$scope', '$window', function($scope, $window) {
-	
 }]);
 
 /*function onSuccess(googleUser) {
@@ -58,10 +76,6 @@ app.controller('twittCtrl', ['$scope', '$window', function($scope, $window) {
 	console.log('Image URL: ' + profile.getImageUrl());
 	console.log('Email: ' + profile.getEmail());
 	window.location.href = "#!twitt";
-}
-
-function onFailure() {
-	console.log("Sign in failed");
 }*/
 
 function signOut() {

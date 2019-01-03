@@ -20,10 +20,8 @@
 		</nav>
 		<div ng-view></div>
 		
-		<div id="my-signin2"></div>
-		
 		<script>
-			function init() {
+			var init = function() {
 		    	console.log("init called");
 		    	window.init();
 		    };
@@ -39,10 +37,10 @@
 		          'onfailure': onFailure
 		        });
 		    }
-
+		    
 		    function onSuccess(googleUser) {
-		    	console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-		    }
+		    	window.onSuccess(googleUser);
+		    };
 		    	
 		    function onFailure(error) {
 		    	console.log(error);
@@ -56,5 +54,6 @@
 		<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 		<script src="https://apis.google.com/js/client.js?onload=init"></script>
 		<script src="script.js"></script>
+		
 	</body>
 </html>
