@@ -212,7 +212,7 @@ public class TinyTwittEndpoint {
 		return userEntity;
 	}
 	
-	@ApiMethod(name = "getUser", httpMethod = HttpMethod.GET, path = "users/${id}")
+	@ApiMethod(name = "getUser", httpMethod = HttpMethod.GET, path = "users/id")
 	public UserEntity getUser(@Named("userId") String userId) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		UserEntity userEntity = null;
@@ -224,7 +224,7 @@ public class TinyTwittEndpoint {
 		return userEntity;
 	} 
 	
-	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/${id}")
+	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/id")
 	public void followUser (@Named("userId") String userId,@Named("userToFollowId") String userToFollowId) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
