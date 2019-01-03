@@ -6,35 +6,47 @@
 		
 		<link rel="stylesheet" href="style.css">
 		<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
-		
-		<script src="https://apis.google.com/js/api.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-		<script src="https://apis.google.com/js/platform.js" async defer></script>
-		<script src="script.js"></script>
+    	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 		
 		<title>TinyTwitt</title>
 	</head>
 	
 	<body ng-app="tinyTwitt">
-		<div ng-controller="Controller">
-			<h1>TinyTwitt</h1>
-			<div ng-view></div>
-			
-			<button ng-click="myFunc()">Click</button>
-			<p>Coucou : {{count}}</p>
-			
-			<button ng-click="listMyMessages()">Test</button>
-			<h1>Ah</h1>
-		</div>
+		<nav>
+			<div class="nav-wrapper light-blue darken-2">
+				<a href="#" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
+			</div>
+		</nav>
+		<div ng-view></div>
 		
+		<div id="my-signin2"></div>
 		<script>
-	      var init = function() {
-	        console.log("init called");
-	        window.init();
-	      };
-	    </script>
+		    function onSuccess(googleUser) {
+		      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+		    }
+		    function onFailure(error) {
+		      console.log(error);
+		    }
+		    function renderButton() {
+		      gapi.signin2.render('my-signin2', {
+		        'scope': 'profile email',
+		        'width': 240,
+		        'height': 50,
+		        'longtitle': true,
+		        'theme': 'dark',
+		        'onsuccess': onSuccess,
+		        'onfailure': onFailure
+		      });
+		    }
+		</script>
 		
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+		<script src="https://apis.google.com/js/api.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+		<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 		<script src="https://apis.google.com/js/client.js?onload=init"></script>
+		<script src="script.js"></script>
 	</body>
 </html>
