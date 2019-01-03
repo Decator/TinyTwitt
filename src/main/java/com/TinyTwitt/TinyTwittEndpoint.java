@@ -225,19 +225,19 @@ public class TinyTwittEndpoint {
 	} 
 	
 	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/${id}")
-	public void followUser (@Named("userId") String userId, String userToFollow) throws EntityNotFoundException {
+	public void followUser (@Named("userId") String userId,@Named("userToFollowId") String userToFollowId) throws EntityNotFoundException {
 		PersistenceManager pmr = getPersistenceManager();
 		try {
-			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollow))){
+			if (!containsUserEntity(pmr.getObjectById(UserEntity.class, userToFollowId))){
 				throw new EntityNotFoundException("Object does not exist");
 			}
 			UserEntity userFollowing = pmr.getObjectById(UserEntity.class, userId);
-			UserEntity userFollowed = pmr.getObjectById(UserEntity.class, userToFollow);
-			if (!userFollowing.following.contains(userToFollow) && !userFollowed.followers.contains(userId)) {
-				userFollowing.following.add(userToFollow);
+			UserEntity userFollowed = pmr.getObjectById(UserEntity.class, userToFollowId);
+			if (!userFollowing.following.contains(userToFollowId) && !userFollowed.followers.contains(userId)) {
+				userFollowing.following.add(userToFollowId);
 				userFollowed.followers.add(userId);
 			} else {
-				userFollowing.following.remove(userToFollow);
+				userFollowing.following.remove(userToFollowId);
 				userFollowed.followers.remove(userId);
 			}
 		} finally {
