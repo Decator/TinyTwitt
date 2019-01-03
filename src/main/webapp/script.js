@@ -24,8 +24,8 @@ app.controller('mainCtrl', ['$scope', '$window', function($scope, $window) {
 	
 	$scope.listMyMessages = function() {
 		console.log("list messages");
-		console.log(gapi);
-        gapi.client.MessageEndpoint.getTest().execute(
+		//console.log(gapi);
+        gapi.client.MessageEndpoint.sayHello().execute(
           function(resp) {
             console.log(resp);
           }
@@ -37,7 +37,7 @@ app.controller('mainCtrl', ['$scope', '$window', function($scope, $window) {
     // onload -> init() -> window.init() -> then here
     $window.init = function() {
 	    console.log("windowinit called");
-	    var rootApi = 'http://localhost:8080/_ah/api/';
+	    var rootApi = 'https://tinytwitt-227514.appspot.com/_ah/api/';
 	    gapi.client.load('MessageEndpoint', 'v1', function() {
 	    	console.log("message api loaded");
 	    	$scope.listMyMessages();
