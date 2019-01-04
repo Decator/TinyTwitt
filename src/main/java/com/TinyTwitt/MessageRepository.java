@@ -70,7 +70,11 @@ public class MessageRepository {
 	
 	public Message findMessage(Long id) {
 		Message message = ofy().load().type(Message.class).id(id).now();
-		return message;
+		if (message == null) {
+			return message;
+		} else {
+			return null;
+		}
 	}
 	
 	public void removeMessageUser(Long userId) {

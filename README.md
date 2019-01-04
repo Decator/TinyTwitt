@@ -4,9 +4,6 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 
 # App Engine Standard & Google Cloud Endpoints Frameworks & Java
 
-<a href="https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/java-docs-samples&page=editor&open_in_editor=appengine-java8/endpoints-v2-backend/README.md">
-<img alt="Open in Cloud Shell" src ="http://gstatic.com/cloudssh/images/open-btn.png"></a>
-
 ## Build with Maven
 
 ### Adding the project ID to the sample API code
@@ -50,5 +47,9 @@ To deploy the sample API:
     The first time you upload a sample app, you may be prompted to authorize the
     deployment. Follow the prompts: when you are presented with a browser window
     containing a code, copy it to the terminal window.
+    
+0. Deploy the composite indexes:
+		
+		gcloud app deploy src/main/webapp/WEB-INF/index.yaml
 
 0. Wait for the upload to finish.

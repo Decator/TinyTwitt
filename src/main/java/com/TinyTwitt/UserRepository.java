@@ -58,7 +58,11 @@ public class UserRepository {
 	
 	public User findUser(Long id) {
 		User user = ofy().load().type(User.class).id(id).now();
-		return user;
+		if (user == null) {
+			return user;
+		} else {
+			return null;
+		}
 	}
 	
 	public void removeUser(Long id) {
