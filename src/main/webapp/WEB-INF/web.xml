@@ -28,6 +28,9 @@
             <param-value>com.TinyTwitt.TinyTwittEndpoint</param-value>
         </init-param>
     </servlet>
+    <listener>
+		<listener-class>com.TinyTwitt.ObjectifyBootstrap</listener-class>
+	</listener>
     <!-- Route API method requests to the backend. -->
     <servlet-mapping>
         <servlet-name>EndpointsServlet</servlet-name>
@@ -36,6 +39,15 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+    
+    <filter>
+        <filter-name>ObjectifyFilter</filter-name>
+        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+        <filter-name>ObjectifyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+	</filter-mapping>
     
     <security-constraint>
   	<web-resource-collection>
