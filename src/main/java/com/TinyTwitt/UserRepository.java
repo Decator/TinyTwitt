@@ -1,6 +1,6 @@
 package com.TinyTwitt;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
+import static com.TinyTwitt.OfyService.ofy;
 
 import java.util.Collection;
 import java.util.List;
