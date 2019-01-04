@@ -1,5 +1,6 @@
 package com.TinyTwitt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -70,5 +71,22 @@ public class MessageRepository {
 		Message message = ofy().load().type(Message.class).id(id).now();
 		return message;
 	}
-	 
+	
+	public void removeMessageUser(Long userId) {
+		Iterable<Key<Message>> messages = ofy().load().type(Message.class).filter("owner", userId).keys();
+		ofy().delete().keys(messages);
+	}
+	
+	public void deleteAllMessages() {
+		Iterable<Key<Message>> messages = ofy().load().type(Message.class).keys();
+		ofy().delete().keys(messages);
+	}
+	
+	public List<Message> getMessagesFromMessageIndexes(List<MessageIndex> messageIndexes){
+		List<Key<Message>> messageKeys = new ArrayList<Key<Message>>();
+		messageIndexes.forEach (messageIndex -> messageKeys.add(messageIndex.getMessageEntity()));
+		List<Message> messages = new ArrayList<Message>();
+		messages.addAll(ofy().load().keys(messageKeys).values());
+		return messages;
+	}
 }

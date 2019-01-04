@@ -43,7 +43,21 @@ public class UserRepository {
 		if (updatedUser.getUsername() != null) {
 			user.setUsername(updatedUser.getUsername());
 		}
+		if (updatedUser.getFollowers() != null) {
+			user.setFollowers(updatedUser.getFollowers());
+		}
+		if (updatedUser.getFollowing() != null) {
+			user.setFollowing(updatedUser.getFollowing());
+		}
+		if (updatedUser.getTimeline() != null) {
+			user.setTimeline(updatedUser.getTimeline());
+		}
 		ofy().save().entity(user).now();
+		return user;
+	}
+	
+	public User findUser(Long id) {
+		User user = ofy().load().type(User.class).id(id).now();
 		return user;
 	}
 	
@@ -54,8 +68,8 @@ public class UserRepository {
 		ofy().delete().type(User.class).id(id).now();
 	}
 	
-	public User findUser(Long id) {
-		User user = ofy().load().type(User.class).id(id).now();
-		return user;
+	public void deleteAllUsers() {
+		Iterable<Key<User>> users = ofy().load().type(User.class).keys();
+		ofy().delete().keys(users);
 	}
 }

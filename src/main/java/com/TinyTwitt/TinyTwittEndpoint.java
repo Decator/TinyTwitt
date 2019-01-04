@@ -22,6 +22,7 @@ import javax.inject.Named;
 import javax.persistence.EntityNotFoundException;
 
 import com.googlecode.objectify.cmd.Query;
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.Key;
 
@@ -34,134 +35,142 @@ public class TinyTwittEndpoint {
 	
 	public TinyTwittEndpoint() {}
 	
+	//good
 	@ApiMethod(name = "addMessage", httpMethod = HttpMethod.POST, path = "users/{userId}/messages")
-	public Message addMessage(@Named("userId") Long userId, String body, @Nullable @Named("hashtags") HashSet<String> hashtags ) {
+	public Message addMessage(@Named("userId") Long userId, @Named("body") String body, @Nullable @Named("hashtags") HashSet<String> hashtags ) {
 		User user = UserRepository.getInstance().findUser(userId);
 		Message message = new Message();
 		message.setOwner(userId);
 		message.setBody(body);
 		message.setSender(user.getUsername());
-		message.setDate(LocalDateTime.now());
+		String creationDate = DateFormatting.getInstance().formatting(LocalDateTime.now());
+		message.setDate(creationDate);
 		Message newMessage = MessageRepository.getInstance().createMessage(message);
 		MessageIndex messageIndex = new MessageIndex();
 		if (hashtags != null) {
-			messageIndex = new MessageIndex(Key.create(Message.class, message.getId()), user.getFollowers(), hashtags);
+			messageIndex = new MessageIndex(Key.create(Message.class, message.getId()), user.getFollowers(), hashtags, creationDate, message.getOwner());
+			messageIndex.addReceiver(userId);
 		} else {
-			messageIndex = new MessageIndex(Key.create(Message.class, message.getId()), user.getFollowers());
+			messageIndex = new MessageIndex(Key.create(Message.class, message.getId()), user.getFollowers(), creationDate, message.getOwner());
+			messageIndex.addReceiver(userId);
 		}
 		MessageIndexRepository.getInstance().createMessageIndex(messageIndex);
 		return newMessage;
 	}
-	
+	//good
 	@ApiMethod(name = "updateMessage", httpMethod = HttpMethod.PUT, path = "users/{userId}/messages")
-	public Message updateMessage(@Named("userId") Long userId, Message message) {
+	public Message updateMessage(@Named("userId") Long userId, @Named("messageId") Long messageId, @Named("body") String body) {
+		Message message = MessageRepository.getInstance().findMessage(messageId);
 		if (message.getOwner() == userId) {
+			message.setBody(body);
 			return MessageRepository.getInstance().updateMessage(message);
-		} else 
+		} else {
 			return null;
-	}
-	
-	@ApiMethod(name = "getMessage", httpMethod = HttpMethod.GET, path = "users/{userId}/messages/{id}")
-	public Message getMessage(@Named("userId") Long userId, @Named("id") Long id) {
-		Message message = MessageRepository.getInstance().findMessage(id);
-		return message;
-	}
-	
-	@ApiMethod(name = "removeMessage", httpMethod = HttpMethod.DELETE, path = "users/{userId}/messages/{id}")
-	public void removeMessage(@Named("userId") Long userId, @Named("id") Long id) {
-		Message message = MessageRepository.getInstance().findMessage(id);
-		if (message.getOwner() == userId) {
-			List<MessageIndex> messageIndexes = ofy().load().type(MessageIndex.class).ancestor(message.getId()).list();
-			for (MessageIndex messageIndex : messageIndexes) {
-				MessageIndexRepository.getInstance().removeMessageIndex(messageIndex.getId());
-			} 
-			MessageRepository.getInstance().removeMessage(id);
 		}
 	}
-	
+	//good
+	@ApiMethod(name = "getMessage", httpMethod = HttpMethod.GET, path = "users/{userId}/messages/{id}")
+	public Message getMessage(@Named("userId") Long userId, @Named("id") Long messageId) {
+		Message message = MessageRepository.getInstance().findMessage(messageId);
+		return message;
+	}
+	//error java.lang.Long
+	@ApiMethod(name = "removeMessage", httpMethod = HttpMethod.DELETE, path = "users/{userId}/messages/{id}")
+	public void removeMessage(@Named("userId") Long userId, @Named("id") Long messageId) {
+		Message message = MessageRepository.getInstance().findMessage(messageId);
+		if (message.getOwner() == userId) {
+			MessageIndexRepository.getInstance().removeMessageIndexMessage(messageId);
+			MessageRepository.getInstance().removeMessage(messageId);
+		}
+	}
+	//no result
 	@ApiMethod(name = "getMyMessages", httpMethod = HttpMethod.GET, path = "users/self/messages")
 	public List<Message> getMyMessages(@Named("userId") Long userId, @Named("limit") @DefaultValue("10") int limit){
 		List<Message> messages = ofy().load().type(Message.class).filter("owner",userId).limit(limit).list();
 		return messages;
 	}
-	
-	@SuppressWarnings("rawtypes")
+	//java.lang.IllegalArgumentException: A collection of values is required.
 	@ApiMethod(name = "getMessageHashtags", httpMethod = HttpMethod.GET, path = "messages/hashtag")
 	public Collection<Message> getMessageHashtags(@Named ("hashtag") String hashtag, @Named("limit") @DefaultValue("10") int limit){
-			List<MessageIndex> messageIndexes = ofy().load().type(MessageIndex.class).filter("hashtags IN", hashtag).order("hashtag").list();
-			@SuppressWarnings("unchecked")
-			List<Key<Message>> messageKeys = new ArrayList();
-			for (MessageIndex messageIndex : messageIndexes) {
-				messageKeys.add(messageIndex.getMessageEntity());
-			}
-			Map<Key<Message>, Message> messages = ofy().load().keys(messageKeys);
-			return messages.values();
+			List<MessageIndex> messageIndexes = MessageIndexRepository.getInstance().findMessageIndexByHashtag(hashtag, limit);
+			return MessageRepository.getInstance().getMessagesFromMessageIndexes(messageIndexes);
 	}
-	
+	//good
 	@ApiMethod(name = "addUser", httpMethod = HttpMethod.POST, path = "users")
-	public User addUser(@Named("userId") Long userId, String pseudo) {
+	public User addUser(@Named("userId") Long userId, @Named("pseudo") String pseudo) {
 		User user = new User();
 		user.setId(userId);
 		user.setUsername(pseudo);
 		return UserRepository.getInstance().createUser(user);
 	}
-	
+	//good
 	@ApiMethod(name = "updateUser", httpMethod = HttpMethod.PUT, path = "users")
-	public User updateUser(User user) {
+	public User updateUser(@Named("userId") Long userId, @Named("pseudo") String pseudo) {
+			User user = UserRepository.getInstance().findUser(userId);
+			user.setUsername(pseudo);
 			return UserRepository.getInstance().updateUser(user);
 	}
-	
+	//good
 	@ApiMethod(name = "getUser", httpMethod = HttpMethod.GET, path = "users/{id}")
 	public User getUser(@Named("id") Long id) {
 		return UserRepository.getInstance().findUser(id);
 	}
-	
+	//good
 	@ApiMethod(name = "removeUser", httpMethod = HttpMethod.DELETE, path = "users/{id}")
-	public void removeUser(@Named("id") Long id) {
-		List<Message> messages = ofy().load().type(Message.class).filter("owner", id).list();
-		UserRepository.getInstance().removeUser(id);
-		for (Message message : messages) {
-			List<MessageIndex> messageIndexes = ofy().load().type(MessageIndex.class).ancestor(message.getId()).list();
-			for (MessageIndex messageIndex : messageIndexes) {
-				MessageIndexRepository.getInstance().removeMessageIndex(messageIndex.getId());
-			}
-			MessageRepository.getInstance().removeMessage(message.getId());
-		}
+	public void removeUser(@Named("id") Long userId) {
+		MessageIndexRepository.getInstance().removeMessageIndexUser(userId);
+		MessageRepository.getInstance().removeMessageUser(userId);
+		UserRepository.getInstance().removeUser(userId);
 	}
-	
+	//good
 	@ApiMethod(name = "findUsers", httpMethod = HttpMethod.GET, path = "users")
 	public Collection<User> findUsers(@Nullable @Named("limit") @DefaultValue("10") int limit){
 		return UserRepository.getInstance().findUsers(limit);
 	}
-	
-	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/{userId}/following/{userToFollowId}")
+	//good
+	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/{userId}/follow/{userToFollowId}")
 	public void followUser (@Named("userId") Long userId, @Named("userToFollowId") Long userToFollowId) throws EntityNotFoundException {
 		User user = UserRepository.getInstance().findUser(userId);
 		User userToFollow = UserRepository.getInstance().findUser(userToFollowId);
-		if (!user.getFollowing().contains(userToFollowId) && !userToFollow.getFollowers().contains(userId)) {
+		if (!user.getFollowing().contains(userToFollowId) && !user.getFollowers().contains(userId)) {
 			user.addFollowing(userToFollowId);
 			userToFollow.addFollower(userId);
+			UserRepository.getInstance().updateUser(user);
+			UserRepository.getInstance().updateUser(userToFollow);
 		} else {
 			user.removeFollowing(userToFollowId);
 			userToFollow.removeFollower(userId);
-		}
+			UserRepository.getInstance().updateUser(user);
+			UserRepository.getInstance().updateUser(userToFollow);
+		}	
 	}
-	
-	
+	//good
+	@ApiMethod(name = "deleteAllUsers", httpMethod = HttpMethod.DELETE, path = "users")
+	public void deleteAllUsers() {
+		MessageIndexRepository.getInstance().deleteAllMessageIndexes();
+		MessageRepository.getInstance().deleteAllMessages();
+		UserRepository.getInstance().deleteAllUsers();
+	}
+	//good
+	@ApiMethod(name = "deleteAllMessages", httpMethod = HttpMethod.DELETE, path = "users/all/messages")
+	public void deleteAllMessages() {
+		MessageIndexRepository.getInstance().deleteAllMessageIndexes();
+		MessageRepository.getInstance().deleteAllMessages();
+	}
 	
 	/*@SuppressWarnings({"unchecked", "unused"})
 	@ApiMethod(name = "getTimeline", httpMethod = HttpMethod.GET, path = "users/self/timeline")
 	public CollectionResponse<Message> getTimeline(
-			@Named("userId") String userId,
+			@Named("userId") Long userId,
 			@Nullable @Named("cursor") String cursorString,
 			@Nullable @Named ("limit") Integer limit) {
 		
-		Query<Message> query = ofy().load().type(MessageEntity.class);
+		Query<MessageIndex> query = ofy().load().type(MessageIndex.class).filter("receivers IN", userId);
 		if (limit != null) query.limit(limit);
 		if (cursorString != null && cursorString != "") {
 			query = query.startAt(Cursor.fromWebSafeString(cursorString));
 		}
-		List<MessageEntity> records = new ArrayList<MessageEntity>();
+		List<Message> records = new ArrayList<Message>();
 		QueryResultIterator<MessageEntity> iterator = query.iterator();
 		int num = 0;
 		while (iterator.hasNext()) {
@@ -181,6 +190,7 @@ public class TinyTwittEndpoint {
 		return CollectionResponse.<MessageEntity>builder().setItems(records).setNextPageToken(cursorString).build();
 		}*/
 	
+	/* Test methods
 	@ApiMethod(name = "sayHello", httpMethod = HttpMethod.GET, path = "sayHello")
 	public HelloClass sayHello() throws EntityNotFoundException {
 		return new HelloClass();
@@ -189,16 +199,6 @@ public class TinyTwittEndpoint {
 	@ApiMethod(name = "sayHelloByName", httpMethod = HttpMethod.GET, path = "sayHelloByName")
 	public HelloClass sayHelloByName(@Named("name") String name) {
 		return new HelloClass(name);
-	}
-	
-
-
-	
-	
-
-	
-	
-	
-	
+	}*/
 	
 }

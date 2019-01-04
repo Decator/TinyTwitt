@@ -1,6 +1,5 @@
 package com.TinyTwitt;
 
-import java.time.LocalDateTime;
 
 import com.googlecode.objectify.annotation.*;
 
@@ -16,19 +15,19 @@ public class Message {
 
 	private String body;
 
-	private LocalDateTime date;
+	private String date;
 
 	public Message() {
 	}
 
-	public Message(String sender, Long owner, String body, LocalDateTime date) {
+	public Message(String sender, Long owner, String body, String date) {
 		this.sender = sender;
 		this.owner = owner;
 		this.body = body;
 		this.date = date;
 	}
 
-	public Message(Long id, String sender, Long owner, String body, LocalDateTime date) {
+	public Message(Long id, String sender, Long owner, String body, String date) {
 		this.id = id;
 		this.sender = sender;
 		this.owner = owner;
@@ -68,11 +67,11 @@ public class Message {
 		this.body = body;
 	}
 
-	public LocalDateTime getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDateTime date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	

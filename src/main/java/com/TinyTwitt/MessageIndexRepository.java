@@ -35,10 +35,14 @@ public class MessageIndexRepository {
 			return null;
 		}
 		MessageIndex messageIndex = ofy().load().key(Key.create(MessageIndex.class, updatedMessageIndex.getId())).now();
-		messageIndex.setId(updatedMessageIndex.getId());
 		messageIndex.setMessageEntity(updatedMessageIndex.getMessageEntity());
-		messageIndex.setReceivers(updatedMessageIndex.getReceivers());
-		messageIndex.setHashtags(updatedMessageIndex.getHashtags());
+		messageIndex.setDate(updatedMessageIndex.getDate());
+		if (updatedMessageIndex.getReceivers() != null) {
+			messageIndex.setReceivers(updatedMessageIndex.getReceivers());
+		}
+		if (updatedMessageIndex.getHashtags() != null) {
+			messageIndex.setHashtags(updatedMessageIndex.getHashtags());
+		}
 		ofy().save().entity(messageIndex).now();
 		return messageIndex;
 	}
@@ -53,5 +57,24 @@ public class MessageIndexRepository {
 	public MessageIndex findMessageIndex(Long id) {
 		MessageIndex messageIndex = ofy().load().type(MessageIndex.class).id(id).now();
 		return messageIndex;
+	}
+	
+	public void removeMessageIndexMessage(Long messageId) {
+		Iterable<Key<MessageIndex>> messageIndexes = ofy().load().type(MessageIndex.class).ancestor(Key.create(Message.class, messageId)).keys();
+		ofy().delete().keys(messageIndexes);
+	}
+	
+	public void removeMessageIndexUser(Long userId) {
+		Iterable<Key<MessageIndex>> messageIndexes = ofy().load().type(MessageIndex.class).filter("owner", userId).keys();
+		ofy().delete().keys(messageIndexes);
+	}
+	
+	public void deleteAllMessageIndexes() {
+		Iterable<Key<MessageIndex>> messageIndexes = ofy().load().type(MessageIndex.class).keys();
+		ofy().delete().keys(messageIndexes);
+	}
+	
+	public List<MessageIndex> findMessageIndexByHashtag(String hashtag, int limit){
+		return ofy().load().type(MessageIndex.class).filter("hashtags IN", hashtag).order("date").limit(limit).list();
 	}
 }

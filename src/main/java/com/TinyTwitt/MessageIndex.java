@@ -1,6 +1,5 @@
 package com.TinyTwitt;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,35 +14,40 @@ public class MessageIndex {
 	@Parent
 	Key<Message> messageEntity;
 	@Index
+	Long owner;
+	@Index
 	Set<Long> receivers = new HashSet<Long>();
 	@Index
 	Set<String> hashtags = new HashSet<String>();
 	@Index
-	LocalDateTime date;
+	String date;
 	
 	public MessageIndex() {
 	}
 	
 
-	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers) {
+	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers, String date, Long owner) {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
-		this.date = LocalDateTime.now();
+		this.date = date;
+		this.owner = owner;
 	}
 
-	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags) {
+	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags, String date,Long owner) {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
-		this.date = LocalDateTime.now();
+		this.date = date;
+		this.owner = owner;
 	}
 
-	public MessageIndex(Long id, Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags) {
+	public MessageIndex(Long id, Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags, String date, Long owner) {
 		this.id = id;
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
-		this.date = LocalDateTime.now();
+		this.date = date;
+		this.owner = owner;
 	}
 
 	public Long getId() {
@@ -69,6 +73,14 @@ public class MessageIndex {
 	public void setReceivers(Set<Long> receivers) {
 		this.receivers = receivers;
 	}
+	
+	public void addReceiver(Long receiver) {
+		this.receivers.add(receiver);
+	}
+	
+	public void removeReceiver(Long receiver) {
+		this.receivers.remove(receiver);
+	}
 
 	public Set<String> getHashtags() {
 		return hashtags;
@@ -79,13 +91,23 @@ public class MessageIndex {
 	}
 
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
+	}
+
+
+	public Long getOwner() {
+		return owner;
+	}
+
+
+	public void setOwner(Long owner) {
+		this.owner = owner;
 	}
 	
 	
