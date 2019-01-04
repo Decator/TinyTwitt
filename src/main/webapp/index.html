@@ -13,11 +13,6 @@
 	</head>
 	
 	<body ng-app="tinyTwitt">
-		<nav>
-			<div class="nav-wrapper light-blue darken-2">
-				<a href="#" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
-			</div>
-		</nav>
 		<div ng-view></div>
 		
 		<script>
@@ -29,8 +24,8 @@
 		    function renderButton() {
 		        gapi.signin2.render('my-signin2', {
 		          'scope': 'profile email',
-		          'width': 240,
-		          'height': 50,
+		          'width': 300,
+		          'height': 60,
 		          'longtitle': true,
 		          'theme': 'dark',
 		          'onsuccess': onSuccess,

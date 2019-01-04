@@ -1,7 +1,41 @@
-<section>
-	<a href="#" onclick="signOut();">Sign out</a>
-	
-	<br/>
-	
-	
-</section>
+<nav>
+	<div class="nav-wrapper light-blue darken-2">
+		<form class="left">
+	        <div class="input-field">
+				<input id="search" placeholder="Rechercher" type="search" required>
+	          	<label class="label-icon" for="search"><i class="material-icons">search</i></label>
+	          	<i class="material-icons">close</i>
+          	</div>
+     	</form>
+		<a href="#" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
+		<a href="#" class="right signOut" onclick="signOut();">Sign out</a>
+	</div>
+</nav>
+
+<div class="row">
+	<div class="col s8 offset-s2">
+		<form novalidate>
+			<div class="input-field">
+				<i class="material-icons prefix">mode_edit</i>
+				<input id="text" type="text" class="validate" ng-model="text" required>
+				<label for="text">Quoi de neuf ?</label>
+			</div>
+			<div class="input-field">
+				<i class="material-icons prefix">#</i>
+				<input id="hastag" type="text" class="validate" ng-model="hastags">
+				<label for="hastag">Hastags</label>
+			</div>
+			
+			<p class="center-align">
+				<a ng-click="addMessage()" class="btn-floating btn-large waves-effect waves-light light-blue darken-2"><i class="material-icons">done</i></a>
+			</p>
+		</form>
+		
+		
+		<div class="card-panel light-blue lighten-5">
+	        <span>I am a very simple card. I am good at containing small bits of information.
+	        I am convenient because I require little markup to use effectively. I am similar to what is called a panel in other frameworks.
+	        </span>
+      	</div>
+	</div>
+</div>

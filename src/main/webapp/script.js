@@ -6,7 +6,7 @@ app.config(['$routeProvider', function($routeProvider) {
         templateUrl : "partials/main.html",
         controller : "mainCtrl"
     })
-    .when("/twitt", {
+    .when("/twitt/:id", {
         templateUrl : "partials/twitt.html",
         controller : "twittCtrl"
     })
@@ -15,73 +15,59 @@ app.config(['$routeProvider', function($routeProvider) {
     });
 }]);
 
+app.controller('twittCtrl', ['$scope', '$window', '$routeParams', function($scope, $window, $routeParams) {
+	$scope.text = null;
+	$scope.hastags = null;
+	$scope.id = $routeParams.id;
+	
+	$scope.addMessage = function() {
+		gapi.client.tinytwittendpoint.addMessage({userId: +($scope.id), body:$scope.text}).execute(
+				function(resp) {
+					console.log(resp);
+				}
+		);
+	}
+}]);
+
 app.controller('mainCtrl', ['$scope', '$window', function($scope, $window) {
 	
 	$scope.user = null;
-	$scope.messages = [];
-	
-	$scope.listMyMessages = function() {
-		console.log("list messages");
-        gapi.client.tinytwittendpoint.sayHello().execute(
-          function(resp) {
-            console.log(resp);
-          }
-        );
-    };
     
     $window.onSuccess = function(googleUser) {
-    	console.log("okok");
     	console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
     	$scope.profile = googleUser.getBasicProfile();
-    	console.log($scope.profile);
-    	
-    	gapi.client.tinytwittendpoint.getUser($scope.profile.getId()).execute(
+
+    	gapi.client.tinytwittendpoint.getUser({userId: +($scope.profile.getId())}).execute(
           function(resp) {
-            console.log(resp);
-            if(resp == null){
-            	gapi.client.tinytwittendpoint.addUser($scope.profile.getId(), $scope.profile.getName()).execute(
+            if(resp.id == null){
+            	gapi.client.tinytwittendpoint.addUser({userId: +($scope.profile.getId()), pseudo:$scope.profile.getName()}).execute(
             		function(resp) {
-            			console.log(resp);
             			$scope.user = resp;
+            	    	window.location.href = "#!twitt/"+$scope.profile.getId()+"";
             		}
             	);
             } else {
             	$scope.user = resp;
+            	window.location.href = "#!twitt/"+$scope.profile.getId()+"";
             }
           }
         );
-    	
-    	window.location.href = "#!twitt";
     };
     
-    // little hack to be sure that apis.google.com/js/client.js is loaded
-    // before calling
-    // onload -> init() -> window.init() -> then here
     $window.init = function() {
 	    console.log("windowinit called");
 	    var rootApi = 'https://tinytwitt-227514.appspot.com/_ah/api/';
 	    gapi.client.load('tinytwittendpoint', 'v1', function() {
 	    	console.log("message api loaded");
-	    	$scope.listMyMessages();
 	    }, rootApi);
-
-        //gapi.load('auth2', initSigninV2);
     }
 }]);
-
-/*function onSuccess(googleUser) {
-	var profile = googleUser.getBasicProfile();
-	console.log('ID: ' + profile.getId());
-	console.log('Name: ' + profile.getName());
-	console.log('Image URL: ' + profile.getImageUrl());
-	console.log('Email: ' + profile.getEmail());
-	window.location.href = "#!twitt";
-}*/
 
 function signOut() {
   var auth2 = gapi.auth2.getAuthInstance();
   auth2.signOut().then(function () {
     console.log('User signed out.');
     document.location.href="#";
+    renderButton();
   });
 }
