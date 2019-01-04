@@ -37,7 +37,5 @@ public class TinyTwitt extends HttpServlet {
     out.println("</body></html>");
     
     
-    String userId = userService.getCurrentUser().getUserId();
-    TinyTwittEndpoint endpoint = new TinyTwittEndpoint();
   }
 }

@@ -10,13 +10,13 @@ import com.googlecode.objectify.annotation.*;
 @Entity
 public class MessageIndex {
 	@Id
-	private Long id;
+	private String id;
 	@Parent
 	Key<Message> messageEntity;
 	@Index
-	Long owner;
+	String owner;
 	@Index
-	Set<Long> receivers = new HashSet<Long>();
+	Set<String> receivers = new HashSet<String>();
 	@Index
 	Set<String> hashtags = new HashSet<String>();
 	@Index
@@ -26,22 +26,30 @@ public class MessageIndex {
 	}
 	
 
-	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers, String date, Long owner) {
+	public MessageIndex(Key<Message> messageEntity, Set<String> receivers, String date, String owner) {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
 		this.date = date;
 		this.owner = owner;
 	}
 
-	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags, String date,Long owner) {
+	public MessageIndex(Key<Message> messageEntity, Set<String> receivers, Set<String> hashtags, String date,String owner) {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
 		this.date = date;
 		this.owner = owner;
 	}
+	
+	public MessageIndex(String id, Key<Message> messageEntity, Set<String> receivers, String date, String owner) {
+		this.id = id;
+		this.messageEntity = messageEntity;
+		this.receivers = receivers;
+		this.date = date;
+		this.owner = owner;
+	}
 
-	public MessageIndex(Long id, Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags, String date, Long owner) {
+	public MessageIndex(String id, Key<Message> messageEntity, Set<String> receivers, Set<String> hashtags, String date, String owner) {
 		this.id = id;
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
@@ -49,12 +57,13 @@ public class MessageIndex {
 		this.date = date;
 		this.owner = owner;
 	}
+	
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -66,19 +75,19 @@ public class MessageIndex {
 		this.messageEntity = messageEntity;
 	}
 
-	public Set<Long> getReceivers() {
+	public Set<String> getReceivers() {
 		return receivers;
 	}
 
-	public void setReceivers(Set<Long> receivers) {
+	public void setReceivers(Set<String> receivers) {
 		this.receivers = receivers;
 	}
 	
-	public void addReceiver(Long receiver) {
+	public void addReceiver(String receiver) {
 		this.receivers.add(receiver);
 	}
 	
-	public void removeReceiver(Long receiver) {
+	public void removeReceiver(String receiver) {
 		this.receivers.remove(receiver);
 	}
 
@@ -101,16 +110,13 @@ public class MessageIndex {
 	}
 
 
-	public Long getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
 
-	public void setOwner(Long owner) {
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-	
-	
-	
 	
 }

@@ -8,27 +8,27 @@ import com.googlecode.objectify.annotation.*;
 @Entity
 public class User {
 	@Id
-	Long id;
+	String id;
 
 	String username;
 	
-	Set<Long> followers = new HashSet<Long>();
+	Set<String> followers = new HashSet<String>();
 
-	Set<Long> following = new HashSet<Long>();
+	Set<String> following = new HashSet<String>();
 	
 	Set<Message> timeline = new HashSet<Message>();
 
 	public User() {
 	}
 
-	public User(String username, Set<Long> followers, Set<Long> following, Set<Message> timeline) {
+	public User(String username, Set<String> followers, Set<String> following, Set<Message> timeline) {
 		this.username = username;
 		this.followers = followers;
 		this.following = following;
 		this.timeline = timeline;
 	}
 
-	public User(Long id, String username, Set<Long> followers, Set<Long> following, Set<Message> timeline) {
+	public User(String id, String username, Set<String> followers, Set<String> following, Set<Message> timeline) {
 		this.id = id;
 		this.username = username;
 		this.followers = followers;
@@ -36,11 +36,11 @@ public class User {
 		this.timeline = timeline;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -52,19 +52,19 @@ public class User {
 		this.username = username;
 	}
 
-	public Set<Long> getFollowers() {
+	public Set<String> getFollowers() {
 		return followers;
 	}
 
-	public void setFollowers(Set<Long> followers) {
+	public void setFollowers(Set<String> followers) {
 		this.followers = followers;
 	}
 
-	public Set<Long> getFollowing() {
+	public Set<String> getFollowing() {
 		return following;
 	}
 
-	public void setFollowing(Set<Long> following) {
+	public void setFollowing(Set<String> following) {
 		this.following = following;
 	}
 
@@ -76,19 +76,19 @@ public class User {
 		this.timeline = timeline;
 	}
 	
-	public void addFollower(Long idFollower) {
+	public void addFollower(String idFollower) {
 		this.followers.add(idFollower);
 	}
 	
-	public void removeFollower(Long idFollower) {
+	public void removeFollower(String idFollower) {
 		this.followers.remove(idFollower);
 	}
 	
-	public void addFollowing(Long idFollowing) {
+	public void addFollowing(String idFollowing) {
 		this.following.add(idFollowing);
 	}
 	
-	public void removeFollowing(Long idFollowing) {
+	public void removeFollowing(String idFollowing) {
 		this.following.remove(idFollowing);
 	}
 	

@@ -7,11 +7,11 @@ import com.googlecode.objectify.annotation.*;
 public class Message {
 	
 	@Id
-	private Long id;
+	private String id;
 	
 	private String sender;
 	@Index
-	private Long owner;
+	private String owner;
 
 	private String body;
 	@Index
@@ -20,14 +20,14 @@ public class Message {
 	public Message() {
 	}
 
-	public Message(String sender, Long owner, String body, String date) {
+	public Message(String sender, String owner, String body, String date) {
 		this.sender = sender;
 		this.owner = owner;
 		this.body = body;
 		this.date = date;
 	}
 
-	public Message(Long id, String sender, Long owner, String body, String date) {
+	public Message(String id, String sender, String owner, String body, String date) {
 		this.id = id;
 		this.sender = sender;
 		this.owner = owner;
@@ -35,11 +35,11 @@ public class Message {
 		this.date = date;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -51,11 +51,11 @@ public class Message {
 		this.sender = sender;
 	}
 
-	public Long getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(Long owner) {
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 

@@ -2,7 +2,6 @@ package com.TinyTwitt;
 
 import static com.TinyTwitt.OfyService.ofy;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.googlecode.objectify.Key;
@@ -47,24 +46,24 @@ public class MessageIndexRepository {
 		return messageIndex;
 	}
 	
-	public void removeMessageIndex(Long id) {
+	public void removeMessageIndex(String id) {
 		if (id == null) {
 			return;
 		}
 		ofy().delete().type(MessageIndex.class).id(id).now();
 	}
 	
-	public MessageIndex findMessageIndex(Long id) {
+	public MessageIndex findMessageIndex(String id) {
 		MessageIndex messageIndex = ofy().load().type(MessageIndex.class).id(id).now();
 		return messageIndex;
 	}
 	
-	public void removeMessageIndexMessage(Long messageId) {
+	public void removeMessageIndexMessage(String messageId) {
 		Iterable<Key<MessageIndex>> messageIndexes = ofy().load().type(MessageIndex.class).ancestor(Key.create(Message.class, messageId)).keys();
 		ofy().delete().keys(messageIndexes);
 	}
 	
-	public void removeMessageIndexUser(Long userId) {
+	public void removeMessageIndexUser(String userId) {
 		Iterable<Key<MessageIndex>> messageIndexes = ofy().load().type(MessageIndex.class).filter("owner", userId).keys();
 		ofy().delete().keys(messageIndexes);
 	}

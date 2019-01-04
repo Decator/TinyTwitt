@@ -56,7 +56,7 @@ public class UserRepository {
 		return user;
 	}
 	
-	public User findUser(Long id) {
+	public User findUser(String id) {
 		User user = ofy().load().type(User.class).id(id).now();
 		if (user == null) {
 			return user;
@@ -65,7 +65,7 @@ public class UserRepository {
 		}
 	}
 	
-	public void removeUser(Long id) {
+	public void removeUser(String id) {
 		if (id == null) {
 			return;
 		}

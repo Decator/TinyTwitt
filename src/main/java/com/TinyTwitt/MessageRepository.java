@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.cmd.Query;
 
 import static com.TinyTwitt.OfyService.ofy;
 
@@ -30,8 +29,8 @@ public class MessageRepository {
 		return messageRepository;
 	}
 
-	public Collection<Message> findMessages() {
-		List<Message> messages = ofy().load().type(Message.class).list();
+	public Collection<Message> findMessages(int limit) {
+		List<Message> messages = ofy().load().type(Message.class).limit(limit).list();
 		return messages;
 	}
 
@@ -61,14 +60,14 @@ public class MessageRepository {
 		return message;
 	}
 	
-	public void removeMessage(Long id) {
+	public void removeMessage(String id) {
 		if (id == null) {
 			return;
 		}
 		ofy().delete().type(Message.class).id(id).now();
 	}
 	
-	public Message findMessage(Long id) {
+	public Message findMessage(String id) {
 		Message message = ofy().load().type(Message.class).id(id).now();
 		if (message == null) {
 			return message;
@@ -77,7 +76,7 @@ public class MessageRepository {
 		}
 	}
 	
-	public void removeMessageUser(Long userId) {
+	public void removeMessageUser(String userId) {
 		Iterable<Key<Message>> messages = ofy().load().type(Message.class).filter("owner", userId).keys();
 		ofy().delete().keys(messages);
 	}
@@ -95,7 +94,7 @@ public class MessageRepository {
 		return messages;
 	}
 	
-	public List<Message> myMessages(Long userId, int limit){
+	public List<Message> myMessages(String userId, int limit){
 		return ofy().load().type(Message.class).filter("owner", userId).order("-date").limit(limit).list();
 	}
 	
