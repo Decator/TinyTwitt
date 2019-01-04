@@ -36,24 +36,26 @@ public class TinyTwittEndpoint {
 	@ApiMethod(name = "addMessage", httpMethod = HttpMethod.POST, path = "users/{userId}/messages")
 	public Message addMessage(@Named("userId") String userId, @Named("body") String body, @Nullable @Named("hashtags") HashSet<String> hashtags ) {
 		User user = UserRepository.getInstance().findUser(userId);
-		String idMessage = UUID.randomUUID().toString();
+		String idMessage = UUID.randomUUID().toString().replaceAll("-","");
 		String creationDate = DateFormatting.getInstance().formatting(LocalDateTime.now());
-		Message message = new Message(idMessage, user.getUsername(), userId, body, creationDate);
+		Message message = new Message();
+		message.setId(idMessage);
+		message.setSender(user.getUsername()); 
+		message.setOwner(userId); 
+		message.setBody(body); 
+		message.setDate(creationDate);
 		MessageRepository.getInstance().createMessage(message);
-		MessageIndex messageIndex = new MessageIndex();
-		String idMessageIndex = UUID.randomUUID().toString();
+		String idMessageIndex = UUID.randomUUID().toString().replaceAll("-","");
+		MessageIndex messageIndex = new MessageIndex(idMessageIndex, Key.create(Message.class, message.getId()), user.getFollowers(), creationDate, message.getOwner());
+		messageIndex.addReceiver(userId);
 		if (hashtags != null) {
-			messageIndex = new MessageIndex(idMessageIndex, Key.create(Message.class, message.getId()), user.getFollowers(), hashtags, creationDate, message.getOwner());
-			messageIndex.addReceiver(userId);
-		} else {
-			messageIndex = new MessageIndex(idMessageIndex, Key.create(Message.class, message.getId()), user.getFollowers(), creationDate, message.getOwner());
-			messageIndex.addReceiver(userId);
+			messageIndex.setHashtags(hashtags);
 		}
 		MessageIndexRepository.getInstance().createMessageIndex(messageIndex);
 		return message;
 	}
 	//good
-	@ApiMethod(name = "updateMessage", httpMethod = HttpMethod.PUT, path = "users/{userId}/messages")
+	@ApiMethod(name = "updateMessage", httpMethod = HttpMethod.PUT, path = "users/{userId}/messages/{messageId}")
 	public Message updateMessage(@Named("userId") String userId, @Named("messageId") String messageId, @Named("body") String body) {
 		Message message = MessageRepository.getInstance().findMessage(messageId);
 		if (message.getOwner() == userId) {
@@ -98,7 +100,7 @@ public class TinyTwittEndpoint {
 		return UserRepository.getInstance().createUser(user);
 	}
 	//good
-	@ApiMethod(name = "updateUser", httpMethod = HttpMethod.PUT, path = "users")
+	@ApiMethod(name = "updateUser", httpMethod = HttpMethod.PUT, path = "users/{userId}")
 	public User updateUser(@Named("userId") String userId, @Named("pseudo") String pseudo) {
 			User user = UserRepository.getInstance().findUser(userId);
 			user.setUsername(pseudo);
@@ -117,7 +119,7 @@ public class TinyTwittEndpoint {
 		UserRepository.getInstance().removeUser(userId);
 	}
 	//good
-	@ApiMethod(name = "findUsers", httpMethod = HttpMethod.GET, path = "users")
+	@ApiMethod(name = "findUsers", httpMethod = HttpMethod.GET, path = "users/all")
 	public Collection<User> findUsers(@Nullable @Named("limit") @DefaultValue("10") int limit){
 		return UserRepository.getInstance().findUsers(limit);
 	}
@@ -139,7 +141,7 @@ public class TinyTwittEndpoint {
 		}	
 	}
 	//good
-	@ApiMethod(name = "deleteAllUsers", httpMethod = HttpMethod.DELETE, path = "users")
+	@ApiMethod(name = "deleteAllUsers", httpMethod = HttpMethod.DELETE, path = "users/all")
 	public void deleteAllUsers() {
 		MessageIndexRepository.getInstance().deleteAllMessageIndexes();
 		MessageRepository.getInstance().deleteAllMessages();

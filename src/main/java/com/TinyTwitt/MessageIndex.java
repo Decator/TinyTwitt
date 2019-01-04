@@ -12,29 +12,29 @@ public class MessageIndex {
 	@Id
 	private String id;
 	@Parent
-	Key<Message> messageEntity;
+	private Key<Message> message;
 	@Index
-	String owner;
+	private String owner;
 	@Index
-	Set<String> receivers = new HashSet<String>();
+	private Set<String> receivers = new HashSet<String>();
 	@Index
-	Set<String> hashtags = new HashSet<String>();
+	private Set<String> hashtags = new HashSet<String>();
 	@Index
-	String date;
+	private String date;
 	
 	public MessageIndex() {
 	}
 	
 
 	public MessageIndex(Key<Message> messageEntity, Set<String> receivers, String date, String owner) {
-		this.messageEntity = messageEntity;
+		this.message = messageEntity;
 		this.receivers = receivers;
 		this.date = date;
 		this.owner = owner;
 	}
 
 	public MessageIndex(Key<Message> messageEntity, Set<String> receivers, Set<String> hashtags, String date,String owner) {
-		this.messageEntity = messageEntity;
+		this.message = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
 		this.date = date;
@@ -43,7 +43,7 @@ public class MessageIndex {
 	
 	public MessageIndex(String id, Key<Message> messageEntity, Set<String> receivers, String date, String owner) {
 		this.id = id;
-		this.messageEntity = messageEntity;
+		this.message = messageEntity;
 		this.receivers = receivers;
 		this.date = date;
 		this.owner = owner;
@@ -51,7 +51,7 @@ public class MessageIndex {
 
 	public MessageIndex(String id, Key<Message> messageEntity, Set<String> receivers, Set<String> hashtags, String date, String owner) {
 		this.id = id;
-		this.messageEntity = messageEntity;
+		this.message = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
 		this.date = date;
@@ -68,11 +68,11 @@ public class MessageIndex {
 	}
 
 	public Key<Message> getMessageEntity() {
-		return messageEntity;
+		return message;
 	}
 
-	public void setMessageEntity(Key<Message> messageEntity) {
-		this.messageEntity = messageEntity;
+	public void setMessageEntity(Key<Message> message) {
+		this.message = message;
 	}
 
 	public Set<String> getReceivers() {

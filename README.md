@@ -50,6 +50,6 @@ To deploy the sample API:
     
 0. Deploy the composite indexes:
 		
-		gcloud app deploy src/main/webapp/WEB-INF/index.yaml
+		`gcloud app deploy src/main/webapp/WEB-INF/index.yaml`
 
 0. Wait for the upload to finish.

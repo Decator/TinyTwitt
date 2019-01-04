@@ -70,9 +70,9 @@ public class MessageRepository {
 	public Message findMessage(String id) {
 		Message message = ofy().load().type(Message.class).id(id).now();
 		if (message == null) {
-			return message;
-		} else {
 			return null;
+		} else {
+			return message;
 		}
 	}
 	

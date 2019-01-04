@@ -49,9 +49,6 @@ public class UserRepository {
 		if (updatedUser.getFollowing() != null) {
 			user.setFollowing(updatedUser.getFollowing());
 		}
-		if (updatedUser.getTimeline() != null) {
-			user.setTimeline(updatedUser.getTimeline());
-		}
 		ofy().save().entity(user).now();
 		return user;
 	}
@@ -59,9 +56,9 @@ public class UserRepository {
 	public User findUser(String id) {
 		User user = ofy().load().type(User.class).id(id).now();
 		if (user == null) {
-			return user;
-		} else {
 			return null;
+		} else {
+			return user;
 		}
 	}
 	

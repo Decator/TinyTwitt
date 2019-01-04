@@ -15,25 +15,21 @@ public class User {
 	Set<String> followers = new HashSet<String>();
 
 	Set<String> following = new HashSet<String>();
-	
-	Set<Message> timeline = new HashSet<Message>();
 
 	public User() {
 	}
 
-	public User(String username, Set<String> followers, Set<String> following, Set<Message> timeline) {
+	public User(String username, Set<String> followers, Set<String> following) {
 		this.username = username;
 		this.followers = followers;
 		this.following = following;
-		this.timeline = timeline;
 	}
 
-	public User(String id, String username, Set<String> followers, Set<String> following, Set<Message> timeline) {
+	public User(String id, String username, Set<String> followers, Set<String> following) {
 		this.id = id;
 		this.username = username;
 		this.followers = followers;
 		this.following = following;
-		this.timeline = timeline;
 	}
 
 	public String getId() {
@@ -66,14 +62,6 @@ public class User {
 
 	public void setFollowing(Set<String> following) {
 		this.following = following;
-	}
-
-	public Set<Message> getTimeline() {
-		return timeline;
-	}
-
-	public void setTimeline(Set<Message> timeline) {
-		this.timeline = timeline;
 	}
 	
 	public void addFollower(String idFollower) {
