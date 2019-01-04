@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.cmd.Query;
 
 import static com.TinyTwitt.OfyService.ofy;
 
@@ -85,6 +86,18 @@ public class MessageRepository {
 	public List<Message> getMessagesFromMessageIndexes(List<MessageIndex> messageIndexes){
 		List<Key<Message>> messageKeys = new ArrayList<Key<Message>>();
 		messageIndexes.forEach (messageIndex -> messageKeys.add(messageIndex.getMessageEntity()));
+		List<Message> messages = new ArrayList<Message>();
+		messages.addAll(ofy().load().keys(messageKeys).values());
+		return messages;
+	}
+	
+	public List<Message> myMessages(Long userId, int limit){
+		return ofy().load().type(Message.class).filter("owner", userId).order("-date").limit(limit).list();
+	}
+	
+	public List<Message> myTimeline(List<MessageIndex> messageIndexes){
+		List<Key<Message>> messageKeys = new ArrayList<Key<Message>>();
+		messageIndexes.forEach(messageIndex -> messageKeys.add(messageIndex.getMessageEntity()));
 		List<Message> messages = new ArrayList<Message>();
 		messages.addAll(ofy().load().keys(messageKeys).values());
 		return messages;

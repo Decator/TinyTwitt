@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<datastore-indexes
+  autoGenerate="true">
+    <datastore-index kind="Message" ancestor="false">
+    	<property name ="owner" />
+        <property name="date" direction="desc" />
+    </datastore-index>
+    <datastore-index kind="MessageIndex" ancestor="false">
+    	<property name="hashtags" />
+        <property name="date" direction="desc" />
+    </datastore-index>
+</datastore-indexes>

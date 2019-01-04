@@ -14,7 +14,7 @@ public class Message {
 	private Long owner;
 
 	private String body;
-
+	@Index
 	private String date;
 
 	public Message() {

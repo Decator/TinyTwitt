@@ -75,6 +75,7 @@ public class MessageIndexRepository {
 	}
 	
 	public List<MessageIndex> findMessageIndexByHashtag(String hashtag, int limit){
-		return ofy().load().type(MessageIndex.class).filter("hashtags IN", hashtag).order("date").limit(limit).list();
+		return ofy().load().type(MessageIndex.class).filter("hashtags", hashtag).order("-date").limit(limit).list();
 	}
+
 }

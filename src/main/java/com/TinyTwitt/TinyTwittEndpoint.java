@@ -3,19 +3,16 @@ package com.TinyTwitt;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.DefaultValue;
-
+import com.google.api.server.spi.response.CollectionResponse;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -69,29 +66,28 @@ public class TinyTwittEndpoint {
 		}
 	}
 	//good
-	@ApiMethod(name = "getMessage", httpMethod = HttpMethod.GET, path = "users/{userId}/messages/{id}")
-	public Message getMessage(@Named("userId") Long userId, @Named("id") Long messageId) {
+	@ApiMethod(name = "getMessage", httpMethod = HttpMethod.GET, path = "users/{userId}/messages/{messageId}")
+	public Message getMessage(@Named("userId") Long userId, @Named("messageId") Long messageId) {
 		Message message = MessageRepository.getInstance().findMessage(messageId);
 		return message;
 	}
-	//error java.lang.Long
-	@ApiMethod(name = "removeMessage", httpMethod = HttpMethod.DELETE, path = "users/{userId}/messages/{id}")
-	public void removeMessage(@Named("userId") Long userId, @Named("id") Long messageId) {
+	//good
+	@ApiMethod(name = "removeMessage", httpMethod = HttpMethod.DELETE, path = "users/{userId}/messages/{messageId}")
+	public void removeMessage(@Named("userId") Long userId, @Named("messageId") Long messageId) {
 		Message message = MessageRepository.getInstance().findMessage(messageId);
 		if (message.getOwner() == userId) {
 			MessageIndexRepository.getInstance().removeMessageIndexMessage(messageId);
 			MessageRepository.getInstance().removeMessage(messageId);
 		}
 	}
-	//no result
+	//good
 	@ApiMethod(name = "getMyMessages", httpMethod = HttpMethod.GET, path = "users/self/messages")
 	public List<Message> getMyMessages(@Named("userId") Long userId, @Named("limit") @DefaultValue("10") int limit){
-		List<Message> messages = ofy().load().type(Message.class).filter("owner",userId).limit(limit).list();
-		return messages;
+		return MessageRepository.getInstance().myMessages(userId, limit);
 	}
-	//java.lang.IllegalArgumentException: A collection of values is required.
+	//good
 	@ApiMethod(name = "getMessageHashtags", httpMethod = HttpMethod.GET, path = "messages/hashtag")
-	public Collection<Message> getMessageHashtags(@Named ("hashtag") String hashtag, @Named("limit") @DefaultValue("10") int limit){
+	public List<Message> getMessageHashtags(@Named ("hashtag") String hashtag, @Named("limit") @DefaultValue("10") int limit){
 			List<MessageIndex> messageIndexes = MessageIndexRepository.getInstance().findMessageIndexByHashtag(hashtag, limit);
 			return MessageRepository.getInstance().getMessagesFromMessageIndexes(messageIndexes);
 	}
@@ -158,20 +154,20 @@ public class TinyTwittEndpoint {
 		MessageRepository.getInstance().deleteAllMessages();
 	}
 	
-	/*@SuppressWarnings({"unchecked", "unused"})
 	@ApiMethod(name = "getTimeline", httpMethod = HttpMethod.GET, path = "users/self/timeline")
 	public CollectionResponse<Message> getTimeline(
 			@Named("userId") Long userId,
 			@Nullable @Named("cursor") String cursorString,
 			@Nullable @Named ("limit") Integer limit) {
 		
-		Query<MessageIndex> query = ofy().load().type(MessageIndex.class).filter("receivers IN", userId);
+		Query<MessageIndex> query = ofy().load().type(MessageIndex.class).filter("receivers", userId).order("-date");
+		
 		if (limit != null) query.limit(limit);
 		if (cursorString != null && cursorString != "") {
 			query = query.startAt(Cursor.fromWebSafeString(cursorString));
 		}
-		List<Message> records = new ArrayList<Message>();
-		QueryResultIterator<MessageEntity> iterator = query.iterator();
+		List<MessageIndex> records = new ArrayList<MessageIndex>();
+		QueryResultIterator<MessageIndex> iterator = query.iterator();
 		int num = 0;
 		while (iterator.hasNext()) {
 			records.add(iterator.next());
@@ -180,6 +176,8 @@ public class TinyTwittEndpoint {
 				if (num == limit) break;
 				}
 		}
+		List<Message> messages = MessageRepository.getInstance().myTimeline(records);
+		
 		//Find the next cursor
 		if (cursorString != null && cursorString != "") {
 			Cursor cursor = iterator.getCursor();
@@ -187,18 +185,6 @@ public class TinyTwittEndpoint {
 				cursorString = cursor.toWebSafeString();
 			}
 		}
-		return CollectionResponse.<MessageEntity>builder().setItems(records).setNextPageToken(cursorString).build();
-		}*/
-	
-	/* Test methods
-	@ApiMethod(name = "sayHello", httpMethod = HttpMethod.GET, path = "sayHello")
-	public HelloClass sayHello() throws EntityNotFoundException {
-		return new HelloClass();
-	}
-	
-	@ApiMethod(name = "sayHelloByName", httpMethod = HttpMethod.GET, path = "sayHelloByName")
-	public HelloClass sayHelloByName(@Named("name") String name) {
-		return new HelloClass(name);
-	}*/
-	
+		return CollectionResponse.<Message>builder().setItems(messages).setNextPageToken(cursorString).build();
+		}
 }
