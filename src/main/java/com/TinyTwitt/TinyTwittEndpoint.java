@@ -1,5 +1,6 @@
 package com.TinyTwitt;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -34,9 +35,13 @@ public class TinyTwittEndpoint {
 	public TinyTwittEndpoint() {}
 	
 	@ApiMethod(name = "addMessage", httpMethod = HttpMethod.POST, path = "users/{userId}/messages")
-	public Message addMessage(@Named("userId") String userId, Message message, @Nullable @Named("hashtags") HashSet<String> hashtags ) {
-		User user = UserRepository.getInstance().findUser(Long.valueOf(userId));
-		message.setOwner(Long.valueOf(userId));
+	public Message addMessage(@Named("userId") Long userId, String body, @Nullable @Named("hashtags") HashSet<String> hashtags ) {
+		User user = UserRepository.getInstance().findUser(userId);
+		Message message = new Message();
+		message.setOwner(userId);
+		message.setBody(body);
+		message.setSender(user.getUsername());
+		message.setDate(LocalDateTime.now());
 		Message newMessage = MessageRepository.getInstance().createMessage(message);
 		MessageIndex messageIndex = new MessageIndex();
 		if (hashtags != null) {
@@ -49,27 +54,23 @@ public class TinyTwittEndpoint {
 	}
 	
 	@ApiMethod(name = "updateMessage", httpMethod = HttpMethod.PUT, path = "users/{userId}/messages")
-	public Message updateMessage(@Named("userId") String userId, Message message) {
-		if (Long.toString(message.getOwner()) == userId) {
+	public Message updateMessage(@Named("userId") Long userId, Message message) {
+		if (message.getOwner() == userId) {
 			return MessageRepository.getInstance().updateMessage(message);
 		} else 
 			return null;
 	}
 	
 	@ApiMethod(name = "getMessage", httpMethod = HttpMethod.GET, path = "users/{userId}/messages/{id}")
-	public Message getMessage(@Named("userId") String userId, @Named("id") Long id) {
+	public Message getMessage(@Named("userId") Long userId, @Named("id") Long id) {
 		Message message = MessageRepository.getInstance().findMessage(id);
-		if (Long.toString(message.getOwner()) == userId) {
-			return message;
-		} else {
-			return null;
-		}
+		return message;
 	}
 	
 	@ApiMethod(name = "removeMessage", httpMethod = HttpMethod.DELETE, path = "users/{userId}/messages/{id}")
-	public void removeMessage(@Named("userId") String userId, @Named("id") Long id) {
+	public void removeMessage(@Named("userId") Long userId, @Named("id") Long id) {
 		Message message = MessageRepository.getInstance().findMessage(id);
-		if (Long.toString(message.getOwner()) == userId) {
+		if (message.getOwner() == userId) {
 			List<MessageIndex> messageIndexes = ofy().load().type(MessageIndex.class).ancestor(message.getId()).list();
 			for (MessageIndex messageIndex : messageIndexes) {
 				MessageIndexRepository.getInstance().removeMessageIndex(messageIndex.getId());
@@ -79,8 +80,8 @@ public class TinyTwittEndpoint {
 	}
 	
 	@ApiMethod(name = "getMyMessages", httpMethod = HttpMethod.GET, path = "users/self/messages")
-	public List<Message> getMyMessages(@Named("userId") String userId, @Named("limit") @DefaultValue("10") int limit){
-		List<Message> messages = ofy().load().type(Message.class).filter("owner",Long.valueOf(userId)).limit(limit).list();
+	public List<Message> getMyMessages(@Named("userId") Long userId, @Named("limit") @DefaultValue("10") int limit){
+		List<Message> messages = ofy().load().type(Message.class).filter("owner",userId).limit(limit).list();
 		return messages;
 	}
 	
@@ -98,8 +99,10 @@ public class TinyTwittEndpoint {
 	}
 	
 	@ApiMethod(name = "addUser", httpMethod = HttpMethod.POST, path = "users")
-	public User addUser(@Named("userId") String userId, User user) {
-		user.setId(Long.valueOf(userId));
+	public User addUser(@Named("userId") Long userId, String pseudo) {
+		User user = new User();
+		user.setId(userId);
+		user.setUsername(pseudo);
 		return UserRepository.getInstance().createUser(user);
 	}
 	
@@ -126,16 +129,21 @@ public class TinyTwittEndpoint {
 		}
 	}
 	
+	@ApiMethod(name = "findUsers", httpMethod = HttpMethod.GET, path = "users")
+	public Collection<User> findUsers(@Nullable @Named("limit") @DefaultValue("10") int limit){
+		return UserRepository.getInstance().findUsers(limit);
+	}
+	
 	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/{userId}/following/{userToFollowId}")
-	public void followUser (@Named("userId") String userId, @Named("userToFollowId") String userToFollowId) throws EntityNotFoundException {
-		User user = UserRepository.getInstance().findUser(Long.valueOf(userId));
-		User userToFollow = UserRepository.getInstance().findUser(Long.valueOf(userToFollowId));
-		if (!user.getFollowing().contains(Long.valueOf(userToFollowId)) && !userToFollow.getFollowers().contains(Long.valueOf(userId))) {
-			user.getFollowing().add(Long.valueOf(userToFollowId));
-			userToFollow.getFollowers().add(Long.valueOf(userId));
+	public void followUser (@Named("userId") Long userId, @Named("userToFollowId") Long userToFollowId) throws EntityNotFoundException {
+		User user = UserRepository.getInstance().findUser(userId);
+		User userToFollow = UserRepository.getInstance().findUser(userToFollowId);
+		if (!user.getFollowing().contains(userToFollowId) && !userToFollow.getFollowers().contains(userId)) {
+			user.addFollowing(userToFollowId);
+			userToFollow.addFollower(userId);
 		} else {
-			user.getFollowing().remove(Long.valueOf(userToFollowId));
-			userToFollow.getFollowers().remove(Long.valueOf(userId));
+			user.removeFollowing(userToFollowId);
+			userToFollow.removeFollower(userId);
 		}
 	}
 	

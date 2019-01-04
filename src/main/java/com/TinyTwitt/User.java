@@ -75,6 +75,21 @@ public class User {
 	public void setTimeline(Set<Message> timeline) {
 		this.timeline = timeline;
 	}
-
+	
+	public void addFollower(Long idFollower) {
+		this.followers.add(idFollower);
+	}
+	
+	public void removeFollower(Long idFollower) {
+		this.followers.remove(idFollower);
+	}
+	
+	public void addFollowing(Long idFollowing) {
+		this.following.add(idFollowing);
+	}
+	
+	public void removeFollowing(Long idFollowing) {
+		this.following.remove(idFollowing);
+	}
 	
 }

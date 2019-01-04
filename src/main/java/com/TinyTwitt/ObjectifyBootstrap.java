@@ -12,7 +12,6 @@ public class ObjectifyBootstrap implements ServletContextListener {
 		ObjectifyService.register(Message.class);
 		ObjectifyService.register(MessageIndex.class);
 		ObjectifyService.register(User.class);
-		ObjectifyService.register(Long.class);
 		ObjectifyService.begin();
 		
 	}

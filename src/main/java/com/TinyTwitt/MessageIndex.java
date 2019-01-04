@@ -1,6 +1,6 @@
 package com.TinyTwitt;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +19,7 @@ public class MessageIndex {
 	@Index
 	Set<String> hashtags = new HashSet<String>();
 	@Index
-	Date date = new Date();
+	LocalDateTime date;
 	
 	public MessageIndex() {
 	}
@@ -28,12 +28,14 @@ public class MessageIndex {
 	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers) {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
+		this.date = LocalDateTime.now();
 	}
 
 	public MessageIndex(Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags) {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
+		this.date = LocalDateTime.now();
 	}
 
 	public MessageIndex(Long id, Key<Message> messageEntity, Set<Long> receivers, Set<String> hashtags) {
@@ -41,6 +43,7 @@ public class MessageIndex {
 		this.messageEntity = messageEntity;
 		this.receivers = receivers;
 		this.hashtags = hashtags;
+		this.date = LocalDateTime.now();
 	}
 
 	public Long getId() {

@@ -25,8 +25,8 @@ public class UserRepository {
 		return userRepository;
 	}
 
-	public Collection<User> findUsers() {
-		List<User> users = ofy().load().type(User.class).list();
+	public Collection<User> findUsers(int limit) {
+		List<User> users = ofy().load().type(User.class).limit(limit).list();
 		return users;
 	}
 

@@ -10,7 +10,6 @@ public class OfyService {
 		ObjectifyService.register(Message.class);
 		ObjectifyService.register(MessageIndex.class);
 		ObjectifyService.register(User.class);
-		ObjectifyService.register(Long.class);
 		}
 
 	public static Objectify ofy() {
