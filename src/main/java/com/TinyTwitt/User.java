@@ -9,7 +9,8 @@ import com.googlecode.objectify.annotation.*;
 public class User {
 	@Id
 	String id;
-
+	
+	@Index
 	String username;
 	
 	Set<String> followers = new HashSet<String>();

@@ -29,6 +29,11 @@ public class UserRepository {
 		List<User> users = ofy().load().type(User.class).limit(limit).list();
 		return users;
 	}
+	
+	public Collection<User> findUsers(String username, int limit) {
+		List<User> users = ofy().load().type(User.class).filter("username", username).limit(limit).list();
+		return users;
+	}
 
 	public User createUser(User user) {
 		ofy().save().entity(user).now();
