@@ -38,13 +38,18 @@ public class TinyTwittEndpoint {
 		String idMessage = UUID.randomUUID().toString().replaceAll("-","");
 		String creationDate = DateFormatting.getInstance().formatting(LocalDateTime.now());
 		Message message = new Message(idMessage, user.getUsername(), userId, body, creationDate);
-		MessageRepository.getInstance().createMessage(message);
 		String idMessageIndex = UUID.randomUUID().toString().replaceAll("-","");
 		MessageIndex messageIndex = new MessageIndex(idMessageIndex, Key.create(Message.class, message.getId()), user.getFollowers(), creationDate, message.getOwner());
 		messageIndex.addReceiver(userId);
 		if (hashtags != null) {
+			String textHashtag ="\n";
 			messageIndex.setHashtags(hashtags);
+			for (String hashtag : messageIndex.getHashtags()) {
+				textHashtag += "#"+hashtag+" ";
+			}
+			message.setBody(message.getBody()+textHashtag);
 		}
+		MessageRepository.getInstance().createMessage(message);
 		MessageIndexRepository.getInstance().createMessageIndex(messageIndex);
 		return message;
 	}
@@ -91,10 +96,13 @@ public class TinyTwittEndpoint {
 	}
 
 	@ApiMethod(name = "addUser", httpMethod = HttpMethod.POST, path = "users")
-	public User addUser(@Named("userId") String userId, @Named("pseudo") String pseudo) {
+	public User addUser(@Named("userId") String userId, @Named("pseudo") String pseudo, @Nullable @Named("profilePic") String profilePic) {
 		User user = new User();
 		user.setId(userId);
 		user.setUsername(pseudo);
+		if (profilePic != null) {
+			user.setProfilePic(profilePic);
+		}
 		return UserRepository.getInstance().createUser(user);
 	}
 

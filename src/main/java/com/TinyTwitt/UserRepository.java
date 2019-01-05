@@ -31,7 +31,7 @@ public class UserRepository {
 	}
 	
 	public Collection<User> findUsers(String username, int limit) {
-		List<User> users = ofy().load().type(User.class).filter("username", username).limit(limit).list();
+		List<User> users = ofy().load().type(User.class).filter("username >=", username).filter("username <", username + "\uFFFD").limit(limit).list();
 		return users;
 	}
 
@@ -53,6 +53,10 @@ public class UserRepository {
 		}
 		if (updatedUser.getFollowing() != null) {
 			user.setFollowing(updatedUser.getFollowing());
+		}
+		
+		if (updatedUser.getProfilePic() != null) {
+			user.setProfilePic(updatedUser.getProfilePic());
 		}
 		ofy().save().entity(user).now();
 		return user;

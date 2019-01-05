@@ -10,6 +10,8 @@ public class User {
 	@Id
 	String id;
 	
+	String profilePic;
+	
 	@Index
 	String username;
 	
@@ -28,6 +30,16 @@ public class User {
 
 	public User(String id, String username, Set<String> followers, Set<String> following) {
 		this.id = id;
+		this.username = username;
+		this.followers = followers;
+		this.following = following;
+	}
+	
+	
+
+	public User(String id, String profilePic, String username, Set<String> followers, Set<String> following) {
+		this.id = id;
+		this.profilePic = profilePic;
 		this.username = username;
 		this.followers = followers;
 		this.following = following;
@@ -80,5 +92,15 @@ public class User {
 	public void removeFollowing(String idFollowing) {
 		this.following.remove(idFollowing);
 	}
+
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
+	
+	
 	
 }
