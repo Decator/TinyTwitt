@@ -31,7 +31,7 @@ public class UserRepository {
 	}
 	
 	public Collection<User> findUsers(String username, int limit) {
-		List<User> users = ofy().load().type(User.class).filter("username >=", username).filter("username <", username + "\uFFFD").limit(limit).list();
+		List<User> users = ofy().load().type(User.class).filter(("username >=").toLowerCase(), username.toLowerCase()).filter(("username <").toLowerCase(), (username + "\uFFFD").toLowerCase()).limit(limit).list();
 		return users;
 	}
 

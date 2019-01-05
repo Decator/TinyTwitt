@@ -42,7 +42,7 @@ public class TinyTwittEndpoint {
 		MessageIndex messageIndex = new MessageIndex(idMessageIndex, Key.create(Message.class, message.getId()), user.getFollowers(), creationDate, message.getOwner());
 		messageIndex.addReceiver(userId);
 		if (hashtags != null) {
-			String textHashtag ="\n";
+			String textHashtag =" ";
 			messageIndex.setHashtags(hashtags);
 			for (String hashtag : messageIndex.getHashtags()) {
 				textHashtag += "#"+hashtag+" ";
@@ -135,7 +135,7 @@ public class TinyTwittEndpoint {
 	}
 
 	@ApiMethod(name = "followUser", httpMethod = HttpMethod.PUT, path = "users/{userId}/follow/{userToFollowId}")
-	public void followUser (@Named("userId") String userId, @Named("userToFollowId") String userToFollowId) throws EntityNotFoundException {
+	public void followUser (@Named("userId") String userId, @Named("userToFollowId") String userToFollowId) {
 		User user = UserRepository.getInstance().findUser(userId);
 		User userToFollow = UserRepository.getInstance().findUser(userToFollowId);
 		if (!user.getFollowing().contains(userToFollowId) && !user.getFollowers().contains(userId)) {
@@ -198,7 +198,7 @@ public class TinyTwittEndpoint {
 		MessageRepository.getInstance().deleteAllMessages();
 	}
 	
-	@ApiMethod(name = "creatingFollowers", httpMethod = HttpMethod.POST, path = "test/1")
+	/*@ApiMethod(name = "creatingFollowers", httpMethod = HttpMethod.POST, path = "test/1")
 	public void creatingFollowers(@Named("userId") String userId, 
 			@Named("nbFollowers") @Nullable @DefaultValue("100") int nbFollowers,
 			@Nullable @Named("nbCall") @DefaultValue("1") int nbCall,
@@ -228,7 +228,7 @@ public class TinyTwittEndpoint {
 			if (hashtags != null) {
 				messageIndex.setHashtags(hashtags);
 			}
-			MessageIndexRepository.getInstance().createMessageIndex(messageIndex); 
+			MessageIndexRepository.getInstance().createMessageIndex(messageIndex);
 		}
-	}
+	}*/
 }
