@@ -2,32 +2,27 @@ var app = angular.module('tinyTwitt', ['ngRoute', 'services']);
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider
-//    .when("/", {
-//        templateUrl : "partials/main.html",
-//        controller : "mainCtrl"
-//    })
     .when("/", {
-        templateUrl : "partials/twitt.html",
-        controller : "twittCtrl"
+        templateUrl : "partials/logger.html",
+        controller : "loggerCtrl"
     })
-    .when("/users", {
+    .when("/main", {
+        templateUrl : "partials/main.html",
+        controller : "mainCtrl"
+    })
+    .when("/users/:search", {
     	templateUrl : "partials/users.html",
-    	controller : "twittCtrl"
+    	controller : "usersCtrl"
     })
     .when("/user/:id", {
     	templateUrl : "partials/user.html",
     	controller : "userCtrl"
     })
+    .when("/hashtag/:hashtag", {
+    	templateUrl : "partials/hashtag.html",
+    	controller : "hashtagCtrl"
+    })
     .otherwise({
-        redirectTo: '/twitt/'
+        redirectTo: '/'
     });
 }]);
-
-function signOut() {
-  var auth2 = gapi.auth2.getAuthInstance();
-  auth2.signOut().then(function () {
-    console.log('User signed out.');
-    document.location.href="#";
-    renderButton();
-  });
-}

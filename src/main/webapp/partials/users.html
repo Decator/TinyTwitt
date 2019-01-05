@@ -1,32 +1,33 @@
 <nav>
 	<div class="nav-wrapper light-blue darken-2">
-		<form class="left" ng-submit="searchUsers()">
-			<div class="input-field">
-				<input id="search" placeholder="Rechercher" type="search"
-					ng-model="search" required> <label class="label-icon"
-					for="search"><i class="material-icons">search</i></label> <i
-					class="material-icons">close</i>
-			</div>
-		</form>
-		<a href="#!" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
-		<a href="#!" class="right signOut" onclick="signOut();">Sign out</a>
+		<a href="#!main" class="left"><i class="material-icons prefix">chevron_left</i>Retour</a>
+		<a href="#!main" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
+		<a href="#!logger" class="right signOut" ng-click="signOut()">Sign out</a>
 	</div>
 </nav>
 
 <div class="row">
 	<br/>
 	<div class="col s10 offset-s1">
-		<div ng-repeat="user in users" class="col s8 m4">
+		<div ng-if="users.length != 0" ng-repeat="user in users" class="col s8 m4 center">
 			<div class="card light-blue lighten-5">
+				<div class="card-image">
+					<img class="image" ng-src="{{user.profilePic}}">
+				</div>
 				<div class="card-content">
 					<a ng-href="#!user/{{user.id}}" class="card-title">{{user.username}}</a>
-					<p>Following : {{user.following.length}}</p>
-					<p>Followers : {{user.followers.length}}</p>
+					<p>Following : {{user.following.length != null ? user.following.length : 0}}</p>
+					<p>Followers : {{user.followers.length != null ? user.followers.length : 0}}</p>
 				</div>
-				<div class="card-action right-align">
-					<a class="btn blue" ng-click="followUser(user)">Follow</a>
+				<div class="card-action">
+					<a ng-if="!followButton(user)" class="btn blue" ng-click="followUser(user)">Follow</a>
+					<a ng-if="followButton(user)" class="btn blue" ng-click="unfollowUser(user)">Unfollow</a>
 				</div>
 			</div>
 		</div>
+		<div ng-if="users.length == 0">
+			<p class="errorMessage">Aucun utilisateur correspondant</p>
+		</div>
+		
 	</div>
 </div>

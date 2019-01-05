@@ -8,6 +8,50 @@ h1 {
 	font-weight: 500;
 }
 
+.googleButton{
+  width: 100%;
+}
+
+.googleButton > div{
+  margin: 0 auto;
+}
+
 .signOut {
 	padding-right: 9px;
+}
+
+.errorMessage {
+	text-align: center;
+	font-size: 2rem;
+}
+
+.hashtagBold {
+	font-weight: bold !important;
+}
+
+.pseudo {
+	font-size: 14px !important;
+	line-height: 20px !important;
+	font-weight: bold !important;
+}
+
+.cardUser {
+	padding: 10px;
+}
+
+.cardUserButton {
+	padding: 10px 10px;
+	display: flex;
+	justify-content: center;
+}
+
+.userButton {
+	padding: 0px;
+}
+
+.image {
+	width: 9em !important;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 4%;
 }

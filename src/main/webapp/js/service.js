@@ -3,10 +3,6 @@ var services = angular.module('services', []);
 services.factory('GoogleAuth', function() {
 	var googleAuth = {};
 	
-	googleAuth.getAllGoogleAuth = function() {
-		return googleAuth.all;
-	}
-	
 	googleAuth.getIdGoogleAuth = function() {
 		return googleAuth.id;
 	}
@@ -15,20 +11,20 @@ services.factory('GoogleAuth', function() {
 		return googleAuth.name;
 	}
 	
-	googleAuth.getImageGoogleAuth = function() {
-		return googleAuth.image;
+	googleAuth.getImageUrlGoogleAuth = function() {
+		return googleAuth.imageUrl;
 	}
 	
-	googleAuth.getEmailGoogleAuth = function() {
-		return googleAuth.email;
+	googleAuth.setIdGoogleAuth = function(id) {
+		googleAuth.id = id;
 	}
 	
-	googleAuth.setGoogleAuth = function(element) {
-		googleAuth.all = element;
-		googleAuth.id = element.getId();
-		googleAuth.name = element.getName();
-		googleAuth.image = element.getImageUrl();
-		googleAuth.email = element.getEmail();
+	googleAuth.setNameGoogleAuth = function(name) {
+		googleAuth.name = name;
+	}
+	
+	googleAuth.setImageUrlGoogleAuth = function(imageUrl) {
+		googleAuth.imageUrl = imageUrl;
 	}
 	
 	return googleAuth;

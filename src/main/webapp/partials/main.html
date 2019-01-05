@@ -1,7 +1,58 @@
 <nav>
 	<div class="nav-wrapper light-blue darken-2">
-		<a href="#!" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
+		<form class="left" ng-submit="searchUsers()">
+	        <div class="input-field">
+				<input id="search" placeholder="Rechercher" type="search" ng-model="search" required>
+	          	<label class="label-icon" for="search"><i class="material-icons">search</i></label>
+          	</div>
+     	</form>
+		<a href="#!main" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
+		<a href="#!main" class="right signOut" ng-click="signOut()">Sign out</a>
 	</div>
 </nav>
 
-<div id="my-signin2" class="googleButton"></div>
+<div class="row">
+	<div class="col s8 offset-s2">
+		<form novalidate>
+			<div class="input-field">
+				<i class="material-icons prefix">mode_edit</i>
+				<input id="text" type="text" class="validate" ng-model="text" required>
+				<label for="text">Quoi de neuf ?</label>
+			</div>
+			<div class="row">
+				<div class="input-field col s11">
+					<i class="material-icons prefix hashtagBold">#</i>
+					<input id="hashtag" type="text" class="validate" ng-model="hashtags">
+					<label for="hashtag">Hashtags</label>
+				</div>
+				<div class="input-field col s1">
+					<a ng-click="addMessage()" class="btn-floating btn-large waves-effect waves-light light-blue darken-2">
+						<i class="material-icons">done</i>
+					</a>
+				</div>
+			</div>
+		</form>
+      	
+		<div ng-repeat="message in messages">
+			<div class="card light-blue lighten-5">
+				<div class="card-content">
+					<div class="card-image">
+				    	<img src="">
+				    </div>
+					<div>
+						<p class="card-title" style="text-align:left;">
+							<a ng-href="#!user/{{message.owner}}">{{message.sender}}</a>
+							<span style="float:right;">{{message.date}}</span>
+						</p>
+					</div>
+					<div>
+						<p>{{message.body}}</p>
+					</div>
+				</div>
+				<div class="card-action right-align">
+					<a ng-repeat="hashtag in message.hashtags" ng-href="#!hashtag/{{hashtag.substring(1)}}">{{hashtag}}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

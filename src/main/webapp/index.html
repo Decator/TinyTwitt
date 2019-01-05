@@ -13,45 +13,20 @@
 		<script src="https://apis.google.com/js/api.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-		<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
-		<script src="https://apis.google.com/js/client.js?onload=init"></script>
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
+		<script src="https://apis.google.com/js/client.js?onload=init" async defer></script>
 		<script src="js/script.js" type="text/javascript"></script>
 		<script src="js/service.js" type="text/javascript"></script>
-		<script src="js/main.js" type="text/javascript"></script>
-		<script src="js/twitt.js" type="text/javascript"></script>
+		<script src="js/hashtag.js" type="text/javascript"></script>
+		<script src="js/logger.js" type="text/javascript"></script>
+		<script src="js/users.js" type="text/javascript"></script>
 		<script src="js/user.js" type="text/javascript"></script>
+		<script src="js/main.js" type="text/javascript"></script>
 		
 		<title>TinyTwitt</title>
 	</head>
 	
 	<body ng-app="tinyTwitt">
 		<div ng-view></div>
-		
-		<script>
-			var init = function() {
-		    	console.log("init called");
-		    	window.init();
-		    };
-		    
-		    function renderButton() {
-		        gapi.signin2.render('my-signin2', {
-		          'scope': 'profile email',
-		          'width': 300,
-		          'height': 60,
-		          'longtitle': true,
-		          'theme': 'dark',
-		          'onsuccess': onSuccess,
-		          'onfailure': onFailure
-		        });
-		    }
-		    
-		    function onSuccess(googleUser) {
-		    	window.onSuccess(googleUser);
-		    };
-		    	
-		    function onFailure(error) {
-		    	console.log(error);
-		    }
-		</script>
 	</body>
 </html>
