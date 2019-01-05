@@ -1,0 +1,27 @@
+<nav>
+	<div class="nav-wrapper light-blue darken-2">
+		<a href="#!twitt"><i class="material-icons prefix">chevron_left</i></a>
+		<a href="#!" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
+		<a href="#!" class="right signOut" onclick="signOut();">Sign out</a>
+	</div>
+</nav>
+
+<div class="row">
+	<div class="col s8 offset-s2">
+		<div ng-repeat="message in messages">
+			<div class="card light-blue lighten-5">
+				<div class="card-content">
+					<div>
+						<a ng-href="#!user/{{user.id}}" class="card-title" style="text-align:left;">
+							{{message.sender}}
+						</a>
+						<span style="float:right;">{{message.date}}</span>
+					</div>
+					<div>
+						<p>{{message.body}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
