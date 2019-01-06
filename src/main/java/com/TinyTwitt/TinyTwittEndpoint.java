@@ -73,10 +73,10 @@ public class TinyTwittEndpoint {
 	public Message updateMessage(@Named("userId") String userId, @Named("messageId") String messageId, @Named("body") String body,@Nullable @Named("hashtags") Set<String> hashtags) {
 		Message message = MessageRepository.getInstance().findMessage(messageId);
 		User user = UserRepository.getInstance().findUser(userId);
-		if (message.getOwner() == userId) {
+		if (userId.equals(message.getOwner())) {
 			message.setId(messageId);
 			message.setBody(body);
-			Iterable<Key<MessageIndex>> OldMessageIndexKey = ofy().load().type(MessageIndex.class).ancestor(messageId).keys();
+			Iterable<Key<MessageIndex>> OldMessageIndexKey = ofy().load().type(MessageIndex.class).ancestor(message).keys();
 			ofy().delete().keys(OldMessageIndexKey);
 			String idMessageIndex = UUID.randomUUID().toString().replaceAll("-","");
 			MessageIndex messageIndex = new MessageIndex(idMessageIndex, Key.create(Message.class, message.getId()), user.getFollowers(), message.getDate(), message.getOwner());
@@ -89,6 +89,7 @@ public class TinyTwittEndpoint {
 				}
 				message.setBody(message.getBody()+textHashtag);
 			}
+			MessageIndexRepository.getInstance().createMessageIndex(messageIndex);
 			return MessageRepository.getInstance().updateMessage(message);
 		} else {
 			return null;
@@ -104,7 +105,7 @@ public class TinyTwittEndpoint {
 	@ApiMethod(name = "getMessage", httpMethod = HttpMethod.GET, path = "users/{userId}/messages/{messageId}")
 	public Message getMessage(@Named("userId") String userId, @Named("messageId") String messageId) {
 		Message message = MessageRepository.getInstance().findMessage(messageId);
-		if (message.getOwner() == userId) {
+		if (userId.equals(message.getOwner())) {
 			return message;
 		} else {
 			return null;
@@ -119,7 +120,7 @@ public class TinyTwittEndpoint {
 	@ApiMethod(name = "removeMessage", httpMethod = HttpMethod.DELETE, path = "users/{userId}/messages/{messageId}")
 	public void removeMessage(@Named("userId") String userId, @Named("messageId") String messageId) {
 		Message message = MessageRepository.getInstance().findMessage(messageId);
-		if (message.getOwner() == userId) {
+		if (userId.equals(message.getOwner())) {
 			MessageIndexRepository.getInstance().removeMessageIndexMessage(messageId);
 			MessageRepository.getInstance().removeMessage(messageId);
 		}
@@ -240,7 +241,7 @@ public class TinyTwittEndpoint {
 	public void followUser (@Named("userId") String userId, @Named("userToFollowId") String userToFollowId) {
 		User user = UserRepository.getInstance().findUser(userId);
 		User userToFollow = UserRepository.getInstance().findUser(userToFollowId);
-		if (userId != userToFollowId) {
+		if (!userId.equals(userToFollowId)) {
 			if (!user.getFollowing().contains(userToFollowId) && !user.getFollowers().contains(userId)) {
 				user.addFollowing(userToFollowId);
 				userToFollow.addFollower(userId);
