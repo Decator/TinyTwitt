@@ -6,6 +6,11 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 * [Application](https://tinytwitt-227514.appspot.com/)
 * [API Explorer](https://tinytwitt-227514.appspot.com/_ah/api/explorer)
 
+## Warning
+
+Since the website is not under constant use, it might take a few minutes for an instance to be up and running when you try to visit it, especially after logging.
+Don't despair and keep refreshing ! (Caching issues might also arise)
+
 # Measurements
 
 ## 100 Followers
