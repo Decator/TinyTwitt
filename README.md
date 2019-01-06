@@ -9,7 +9,6 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 |          | Posting tweet | 10 Last Messages | 50 Last Messages | 100 Last Messages |
 |----------|---------------|------------------|------------------|-------------------|
 |  Average |    497 ms     |       187 ms     |       198 ms     |       198 ms      |   
-|----------|---------------|------------------|------------------|-------------------|
 | Variance |    18816      |       3864       |       2509       |        2330       |
 
 ## 1000 Followers
@@ -17,7 +16,6 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 |          | Posting tweet | 10 Last Messages | 50 Last Messages | 100 Last Messages |
 |----------|---------------|------------------|------------------|-------------------|
 |  Average |    497 ms     |       194 ms     |       204 ms     |       232 ms      |   
-|----------|---------------|------------------|------------------|-------------------|
 | Variance |    23583      |       7545       |       2735       |        8059       |
 
 ## 5000 Followers
@@ -25,7 +23,6 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 |          | Posting tweet | 10 Last Messages | 50 Last Messages | 100 Last Messages |
 |----------|---------------|------------------|------------------|-------------------|
 |  Average |    618 ms     |       140 ms     |       154 ms     |       170 ms      |   
-|----------|---------------|------------------|------------------|-------------------|
 | Variance |     2966      |        776       |       1119       |         394       |
 
 ## Hashtag 50 Last Messages
@@ -33,7 +30,6 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 |          | 1000 Messages | 5000 Messages |
 |----------|---------------|---------------|
 |  Average |    618 ms     |    140 ms     |   
-|----------|---------------|---------------|
 | Variance |     2966      |      776      |
 
 # App Engine Standard & Google Cloud Endpoints Frameworks & Java
