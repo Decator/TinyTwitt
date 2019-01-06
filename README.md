@@ -29,8 +29,8 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 
 |          | 1000 Messages | 5000 Messages |
 |----------|---------------|---------------|
-|  Average |    618 ms     |    140 ms     |   
-| Variance |     2966      |      776      |
+|  Average |    705 ms     |    690 ms     |   
+| Variance |     28368     |      23358    |
 
 # App Engine Standard & Google Cloud Endpoints Frameworks & Java
 
