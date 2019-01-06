@@ -16,7 +16,7 @@ h1 {
   margin: 0 auto;
 }
 
-.signOut {
+.rightNavbar {
 	padding-right: 9px;
 }
 
@@ -35,6 +35,10 @@ h1 {
 	font-weight: bold !important;
 }
 
+.showFollow {
+	font-size: 14px !important;
+}
+
 .cardUser {
 	padding: 10px;
 }
@@ -46,7 +50,7 @@ h1 {
 }
 
 .userButton {
-	padding: 0px;
+	padding: 0px !important;
 }
 
 .image {
@@ -54,4 +58,8 @@ h1 {
     margin-left: auto;
     margin-right: auto;
     padding-top: 4%;
+}
+
+.imageNavbar {
+	margin: 5px !important;
 }

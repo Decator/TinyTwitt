@@ -2,6 +2,9 @@ app.controller('hashtagCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth'
 	
 	$scope.hashtag = $routeParams.hashtag;
 	$scope.messages = [];
+	$scope.idCurrentUser = GoogleAuth.getIdGoogleAuth();
+	$scope.nameCurrentUser = GoogleAuth.getNameGoogleAuth();
+	$scope.imageUrlCurrentUser = GoogleAuth.getImageUrlGoogleAuth();
 	
 	$scope.checkLogin = function(){
 		if(GoogleAuth.getIdGoogleAuth() == null) {
@@ -49,11 +52,9 @@ app.controller('hashtagCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth'
 						resp.items[i].body = finalMessage;
 						resp.items[i].hashtags = finalTags;
 						
-						console.log(resp.items[i]);
 						$scope.messages.push(resp.items[i]);
 					}
 				}
-				console.log($scope.messages);
 				$scope.$apply();
 			}
 		);

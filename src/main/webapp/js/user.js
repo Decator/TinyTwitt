@@ -3,9 +3,14 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 	$scope.id = $routeParams.id;
 	$scope.messages = [];
 	$scope.image = "";
+	$scope.nameCurrentUser = GoogleAuth.getNameGoogleAuth();
+	$scope.imageUrlCurrentUser = GoogleAuth.getImageUrlGoogleAuth();
+	
+	$scope.editing = 0;
+	$scope.editBody = "";
+	$scope.editTags = "";
 	
 	$scope.followUser = function() {
-		console.log("followUser");
 		var timeBefore = new Date().getTime();
 		gapi.client.tinytwittendpoint.followUser({userId: +(GoogleAuth.getIdGoogleAuth()), userToFollowId: +($scope.id)}).execute(
 			function(resp) {
@@ -21,7 +26,6 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 	};
 	
 	$scope.unfollowUser = function() {
-		console.log("unfollowUser");
 		var timeBefore = new Date().getTime();
 		gapi.client.tinytwittendpoint.followUser({userId: +(GoogleAuth.getIdGoogleAuth()), userToFollowId: +($scope.id)}).execute(
 			function(resp) {
@@ -32,6 +36,61 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 			}
 		);
 	};
+	
+	$scope.editMessage = function(message){
+		$scope.editing = message.id;
+		$scope.editBody = message.body;
+		$scope.editTags = "";
+		for(var i=0; i<message.hashtags.length; i++){
+			$scope.editTags += message.hashtags[i]+" ";
+		}
+	}
+	
+	$scope.deleteMessage = function(message){
+		var timeBefore = new Date().getTime();
+		gapi.client.tinytwittendpoint.removeMessage({userId: +(GoogleAuth.getIdGoogleAuth()), messageId: message.id}).execute(
+			function(resp) {
+				var timeAfter = new Date().getTime();
+				M.toast({html: "Deleting message : "+(timeAfter-timeBefore)+"ms", classes: 'rounded'});
+				document.location.href="#!user/"+$scope.id;
+			}
+		);
+	}
+	
+	$scope.cancelEdit = function(){
+		$scope.editing = 0;
+		$scope.editBody = "";
+		$scope.editTags = "";
+	}
+	
+	$scope.validateEdit = function(message, editBody, editTags){
+		if(editBody != ""){
+			if(editTags != ""){
+				var splitTags = editTags.split(' ');
+				var finalTags = [];
+				splitTags.forEach(function(element) {
+					element = element.replace(/[!?'@#$%^&*éèùàüëö,;.:=+-<>]/g, "");
+					element = element.toLowerCase();
+					finalTags.push(element);
+				});
+				gapi.client.tinytwittendpoint.updateMessage({userId: +(GoogleAuth.getIdGoogleAuth()), messageId: message.id, body: editBody, hashtags: finalTags}).execute(
+					function(resp) {
+						$scope.cancelEdit();
+						document.location.href="#!user/"+$scope.id;
+					}
+				);
+			} else {
+				gapi.client.tinytwittendpoint.updateMessage({userId: +(GoogleAuth.getIdGoogleAuth()), messageId: message.id, body: editBody}).execute(
+					function(resp) {
+						$scope.cancelEdit();
+						document.location.href="#!user/"+$scope.id;
+					}
+				);
+			}
+		} else {
+			alert("error : cannot send empty tweet");
+		}
+	}
 	
 	$scope.showButton = function(){
 		if($scope.user != null){
@@ -46,7 +105,6 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 			if($scope.user.followers) {
 				return $scope.user.followers.includes((+GoogleAuth.getIdGoogleAuth()).toString());
 			} else {
-				console.log(false);
 				return false;
 			}
 		} else {
@@ -80,7 +138,6 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 		gapi.client.tinytwittendpoint.getUser({userId: +($scope.id)}).execute(
 			function(resp) {
 				var timeAfter = new Date().getTime();
-				console.log(resp);
 				M.toast({html: "Loading user : "+(timeAfter-timeBefore)+"ms", classes: 'rounded'});
 				$scope.user = resp;
 				$scope.image = resp.profilePic;
@@ -115,11 +172,9 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 						resp.items[i].body = finalMessage;
 						resp.items[i].hashtags = finalTags;
 						
-						console.log(resp.items[i]);
 						$scope.messages.push(resp.items[i]);
 					}
 				}
-				console.log($scope.messages);
 				$scope.$apply();
 			}
 		);

@@ -1,11 +1,19 @@
 <nav>
 	<div class="nav-wrapper light-blue darken-2">
-		<a href="#!main" class="left"><i class="material-icons prefix">chevron_left</i>Retour</a>
-		<a href="#!main" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
-		<a href="#!logger" class="right signOut" ng-click="signOut()">Sign out</a>
+		<a href="#!main" class="left"><i class="material-icons">chevron_left</i></a>
+		<a target="_blank" href="https://github.com/Decator/TinyTwitt">
+			<img class="imageNavbar" border="0" alt="GitHub" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png" width="50" height="50">
+		</a>
+		<a href="#!main" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a> 
+		<a ng-if="showButton()" ng-href="#!user/{{idCurrentUser}}" class="right rightNavbar">{{nameCurrentUser}}</a>
+		<a ng-if="showButton()" ng-href="#!user/{{idCurrentUser}}" class="right"> 
+			<img class="imageNavbar" ng-src="{{imageUrlCurrentUser}}" width="50" height="50">
+		</a> 
+		<a ng-if="!showButton()" href="#!logger" class="right rightNavbar" ng-click="signOut()">Sign out</a>
 	</div>
 </nav>
 
+<br />
 <div class="row">
 	<div class="col s11">
 		<div class="col s12 m2">
@@ -15,34 +23,60 @@
 				</div>
 				<div class="card-content cardUser">
 					<span class="card-title pseudo">{{user.username}}</span>
-					<p style="font-size: 14px !important;">Following : {{user.following.length != null ? user.following.length : 0}}</p>
-					<p style="font-size: 14px !important;">Followers : {{user.followers.length != null ? user.followers.length : 0}}</p>
+					<p class="showFollow">Following : {{user.following.length != null ? user.following.length : 0}}</p>
+					<p class="showFollow">Followers : {{user.followers.length != null ? user.followers.length : 0}}</p>
 				</div>
 				<div class="card-action cardUserButton">
-					<div ng-if="showButton()" class="card-action right-align userButton">
-						<a ng-if="!followButton()" class="btn blue" ng-click="followUser()">Follow</a>
+					<div ng-if="showButton()"
+						class="card-action right-align userButton">
+						<a ng-if="!followButton()" class="btn blue" ng-click="followUser()">Follow</a> 
 						<a ng-if="followButton()" class="btn blue" ng-click="unfollowUser()">Unfollow</a>
 					</div>
 				</div>
 			</div>
 		</div>
-	
+
 		<div ng-repeat="message in messages" class="col s12 m10">
-			<div class="card light-blue lighten-5">
+			<div ng-if="editing != message.id" class="card light-blue lighten-5">
 				<div class="card-content">
 					<div>
-						<p class="card-title" style="text-align:left;">
-							<a ng-href="#!user/{{message.owner}}">{{message.sender}}</a>
-							<span style="float:right;">{{message.date}}</span>
+						<p class="card-title" style="text-align: left;">
+							<a ng-href="#!user/{{message.owner}}">{{message.sender}}</a> <span
+								style="float: right;">{{message.date}}</span>
 						</p>
 					</div>
 					<div>
 						<p>{{message.body}}</p>
 					</div>
 				</div>
-				<div class="card-action right-align">
-					<a ng-repeat="hashtag in message.hashtags" ng-href="#!hashtag/{{hashtag.substring(1)}}">{{hashtag}}</a>
+				<div class="card-action">
+					<span class="left-align" ng-if="!showButton()">
+						<a href="" ng-click="editMessage(message)"><i class="material-icons">edit</i></a>
+						<a href="" ng-click="deleteMessage(message)"><i class="material-icons">delete</i></a>
+					</span>
+					<a class="right-align" ng-repeat="hashtag in message.hashtags" ng-href="#!hashtag/{{hashtag.substring(1)}}">{{hashtag}}</a>
 				</div>
+			</div>
+			
+			<div ng-if="editing == message.id" class="card light-blue lighten-5">
+				<form novalidate>
+					<div class="card-content">
+							<div class="input-field">
+								<i class="material-icons prefix">mode_edit</i>
+								<input type="text" class="validate" ng-model="editBody">
+							</div>
+							<div class="input-field">
+								<i class="material-icons prefix hashtagBold">#</i>
+								<input type="text" class="validate" ng-model="editTags">
+							</div>
+					</div>
+					<div class="card-action">
+						<span class="left-align" ng-if="!showButton()">
+							<a href="" ng-click="validateEdit(message, editBody, editTags)"><i class="material-icons">check</i></a>
+							<a href="" ng-click="cancelEdit()"><i class="material-icons">close</i></a>
+						</span>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

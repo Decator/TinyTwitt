@@ -6,8 +6,14 @@
 	          	<label class="label-icon" for="search"><i class="material-icons">search</i></label>
           	</div>
      	</form>
+     	<a target="_blank" href="https://github.com/Decator/TinyTwitt">
+			<img class="imageNavbar" border="0" alt="GitHub" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png" width="50" height="50">
+		</a>
 		<a href="#!main" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
-		<a href="#!main" class="right signOut" ng-click="signOut()">Sign out</a>
+		<a ng-href="#!user/{{idCurrentUser}}" class="right rightNavbar">{{nameCurrentUser}}</a>
+		<a ng-href="#!user/{{idCurrentUser}}" class="right">
+			<img class="imageNavbar"  ng-src="{{imageUrlCurrentUser}}" width="50" height="50">
+		</a>
 	</div>
 </nav>
 
@@ -16,7 +22,7 @@
 		<form novalidate>
 			<div class="input-field">
 				<i class="material-icons prefix">mode_edit</i>
-				<input id="text" type="text" class="validate" ng-model="text" required>
+				<input id="text" type="text" class="validate" ng-model="text">
 				<label for="text">Quoi de neuf ?</label>
 			</div>
 			<div class="row">
@@ -33,7 +39,7 @@
 			</div>
 		</form>
 		
-		<div ng-if="messages.lenght != 0" ng-repeat="message in messages">
+		<div ng-if="messages.length != 0" ng-repeat="message in messages">
 			<div class="card light-blue lighten-5">
 				<div class="card-content">
 					<div class="card-image">
@@ -54,7 +60,7 @@
 				</div>
 			</div>
 		</div>
-		<div ng-if="messages.lenght == 0">
+		<div ng-if="messages.length == 0">
 			<p class="message">Votre timeline est vide</p>
 		</div>
 	</div>

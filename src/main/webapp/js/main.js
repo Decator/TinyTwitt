@@ -4,11 +4,13 @@ app.controller('mainCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 	$scope.hashtags = "";
 	$scope.search = "";
 	$scope.messages = [];
+	$scope.idCurrentUser = GoogleAuth.getIdGoogleAuth();
+	$scope.nameCurrentUser = GoogleAuth.getNameGoogleAuth();
+	$scope.imageUrlCurrentUser = GoogleAuth.getImageUrlGoogleAuth();
 	
 	$scope.addMessage = function() {
 		if($scope.text != ""){
 			if($scope.hashtags != ""){
-				console.log($scope.hashtags);
 				var splitTags = $scope.hashtags.split(' ');
 				var finalTags = [];
 				splitTags.forEach(function(element) {
@@ -16,7 +18,6 @@ app.controller('mainCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 					element = element.toLowerCase();
 					finalTags.push(element);
 				});
-				console.log(finalTags);
 				var timeBefore = new Date().getTime();
 				gapi.client.tinytwittendpoint.addMessage({userId: +(GoogleAuth.getIdGoogleAuth()), body:$scope.text, hashtags: finalTags}).execute(
 					function(resp) {
@@ -25,7 +26,6 @@ app.controller('mainCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 						$scope.text = "";
 						$scope.hashtags = "";
 						$scope.loadMessages();
-						console.log(resp);
 					}
 				);
 			} else {
@@ -36,13 +36,12 @@ app.controller('mainCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 						M.toast({html: "Adding tweet : "+(timeAfter-timeBefore)+"ms", classes: 'rounded'});
 						$scope.text = "";
 						$scope.hashtags = "";
-						$scope.loadMessages();
-						console.log(resp);
+						document.location.href="#!main";
 					}
 				);
 			}
 		} else {
-			console.log("error : cannot send empty tweet");
+			alert("error : cannot send empty tweet");
 		}
 	};
 	
@@ -96,11 +95,9 @@ app.controller('mainCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 						resp.items[i].body = finalMessage;
 						resp.items[i].hashtags = finalTags;
 						
-						console.log(resp.items[i]);
 						$scope.messages.push(resp.items[i]);
 					}
 				}
-				console.log($scope.messages);
 				$scope.$apply();
 			}
 		);

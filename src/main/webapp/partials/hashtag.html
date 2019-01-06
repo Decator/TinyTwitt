@@ -1,8 +1,14 @@
 <nav>
 	<div class="nav-wrapper light-blue darken-2">
-		<a href="#!main" class="left"><i class="material-icons prefix">chevron_left</i>Retour</a>
+		<a href="#!main" class="left"><i class="material-icons">chevron_left</i></a>
+		<a href="https://github.com/Decator/TinyTwitt">
+			<img target="_blank" class="imageNavbar" border="0" alt="GitHub" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png" width="50" height="50">
+		</a>
 		<a href="#!main" class="brand-logo center"><i class="material-icons">thumb_up</i>TinyTwitt</a>
-		<a href="#!logger" class="right signOut" ng-click="signOut()">Sign out</a>
+		<a ng-href="#!user/{{idCurrentUser}}" class="right rightNavbar">{{nameCurrentUser}}</a>
+		<a ng-href="#!user/{{idCurrentUser}}" class="right">
+			<img class="imageNavbar" ng-src="{{imageUrlCurrentUser}}" width="50" height="50">
+		</a>
 	</div>
 </nav>
 

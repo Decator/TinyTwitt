@@ -13,13 +13,11 @@ app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', fu
             if(resp.id == null){
             	gapi.client.tinytwittendpoint.addUser({userId: +(GoogleAuth.getIdGoogleAuth()), pseudo: GoogleAuth.getNameGoogleAuth(), profilePic: GoogleAuth.getImageUrlGoogleAuth()}).execute(
             		function(resp) {
-            			console.log(resp);
             			$scope.user = resp;
             	    	window.location.href = "#!main";
             		}
             	);
             } else {
-    			console.log(resp);
             	$scope.user = resp;
             	window.location.href = "#!main";
             }
@@ -37,7 +35,7 @@ app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', fu
     }
     
     $document.ready(function(){
-    	if(gapi.client.tinytwittendpoint != null){
+    	if(gapi.client != null){
         	renderButton();
     	}
     });

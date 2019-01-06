@@ -1,15 +1,16 @@
 app.controller('usersCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', function($scope, $window, $routeParams, GoogleAuth) {
 
 	$scope.users = [];
+	$scope.idCurrentUser = GoogleAuth.getIdGoogleAuth();
+	$scope.nameCurrentUser = GoogleAuth.getNameGoogleAuth();
+	$scope.imageUrlCurrentUser = GoogleAuth.getImageUrlGoogleAuth();
 	
 	$scope.followUser = function(user) {
-		console.log("followUser");
 		var timeBefore = new Date().getTime();
 		gapi.client.tinytwittendpoint.followUser({userId: +(GoogleAuth.getIdGoogleAuth()), userToFollowId: +(user.id)}).execute(
 			function(resp) {
 				var timeAfter = new Date().getTime();
 				M.toast({html: "Following user : "+(timeAfter-timeBefore)+"ms", classes: 'rounded'});
-				console.log(resp);
 				if(user.followers == null){
 					user.followers = [];
 				}
@@ -20,13 +21,11 @@ app.controller('usersCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', 
 	};
 	
 	$scope.unfollowUser = function(user) {
-		console.log("unfollowUser");
 		var timeBefore = new Date().getTime();
 		gapi.client.tinytwittendpoint.followUser({userId: +(GoogleAuth.getIdGoogleAuth()), userToFollowId: +(user.id)}).execute(
 			function(resp) {
 				var timeAfter = new Date().getTime();
 				M.toast({html: "Unfollowing user : "+(timeAfter-timeBefore)+"ms", classes: 'rounded'});
-				console.log(resp);
 				user.followers.splice(user.followers.indexOf((+GoogleAuth.getIdGoogleAuth()).toString()), 1 );
 				$scope.$apply();
 			}
@@ -68,7 +67,6 @@ app.controller('usersCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', 
 				function(resp) {
 					var timeAfter = new Date().getTime();
 					M.toast({html: "Loading users : "+(timeAfter-timeBefore)+"ms", classes: 'rounded'});
-					console.log(resp);
 					$scope.users.length = 0;
 					if(resp.items != null){
 						for(var i=0; i<resp.items.length; i++){
