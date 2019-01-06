@@ -25,12 +25,22 @@ app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', fu
 	            	);
 	            } else {
 	            	$scope.user = resp;
-	            	window.location.href = "#!main";
+	            	if($scope.user.profilePic != GoogleAuth.getImageUrlGoogleAuth() || $scope.user.username != GoogleAuth.getNameGoogleAuth()) {
+	            		gapi.client.tinytwittendpoint.updateUser({userId: +(GoogleAuth.getIdGoogleAuth()), pseudo: GoogleAuth.getNameGoogleAuth(), profilePic: GoogleAuth.getImageUrlGoogleAuth()}).execute(
+            				function(resp) {
+    	            			$scope.user = resp;
+    	            	    	window.location.href = "#!main";
+    	            		}
+    	            	);
+	            	} else {
+		            	window.location.href = "#!main";
+	            	}
 	            }
 	          }
 	        );
     	}
     };
+    
     
     $window.init = function() {
         console.log("windowinit called");
