@@ -32,8 +32,8 @@
 				</div>
 			</div>
 		</form>
-      	
-		<div ng-repeat="message in messages">
+		
+		<div ng-if="messages.lenght != 0" ng-repeat="message in messages">
 			<div class="card light-blue lighten-5">
 				<div class="card-content">
 					<div class="card-image">
@@ -53,6 +53,9 @@
 					<a ng-repeat="hashtag in message.hashtags" ng-href="#!hashtag/{{hashtag.substring(1)}}">{{hashtag}}</a>
 				</div>
 			</div>
+		</div>
+		<div ng-if="messages.lenght == 0">
+			<p class="message">Votre timeline est vide</p>
 		</div>
 	</div>
 </div>

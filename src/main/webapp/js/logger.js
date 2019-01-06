@@ -32,11 +32,14 @@ app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', fu
         var rootApi = 'https://tinytwitt-227514.appspot.com/_ah/api/';
         gapi.client.load('tinytwittendpoint', 'v1', function() {
         	console.log("message api loaded");
+        	renderButton();
         }, rootApi);
     }
     
     $document.ready(function(){
-    	renderButton();
+    	if(gapi.client.tinytwittendpoint != null){
+        	renderButton();
+    	}
     });
 }]);
 
