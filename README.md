@@ -6,7 +6,7 @@ Martin Ars, Alexis Claveau, Alexis Loret, Maud Van Dorssen
 * [Application](https://tinytwitt-227514.appspot.com/)
 * [API Explorer](https://tinytwitt-227514.appspot.com/_ah/api/explorer)
 
-# Results measurements
+# Measurements
 
 ## 100 Followers
 
