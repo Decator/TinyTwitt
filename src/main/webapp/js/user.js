@@ -3,6 +3,7 @@ app.controller('userCtrl', ['$scope', '$window', '$routeParams', 'GoogleAuth', f
 	$scope.id = $routeParams.id;
 	$scope.messages = [];
 	$scope.image = "";
+	$scope.idCurrentUser = GoogleAuth.getIdGoogleAuth();
 	$scope.nameCurrentUser = GoogleAuth.getNameGoogleAuth();
 	$scope.imageUrlCurrentUser = GoogleAuth.getImageUrlGoogleAuth();
 	

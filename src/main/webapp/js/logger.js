@@ -1,6 +1,8 @@
 app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', function($scope, $window, $document, GoogleAuth) {
 	
 	$scope.user = null;
+	$scope.waitingForApi = false;
+	$scope.googleUser = null;
     
     $window.onSuccess = function(googleUser) {
     	GoogleAuth.setIdGoogleAuth(googleUser.getBasicProfile().getId());
@@ -8,21 +10,26 @@ app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', fu
     	GoogleAuth.setImageUrlGoogleAuth(googleUser.getBasicProfile().getImageUrl());
     	console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
     	
-    	gapi.client.tinytwittendpoint.getUser({userId: +(GoogleAuth.getIdGoogleAuth())}).execute(
-          function(resp) {
-            if(resp.id == null){
-            	gapi.client.tinytwittendpoint.addUser({userId: +(GoogleAuth.getIdGoogleAuth()), pseudo: GoogleAuth.getNameGoogleAuth(), profilePic: GoogleAuth.getImageUrlGoogleAuth()}).execute(
-            		function(resp) {
-            			$scope.user = resp;
-            	    	window.location.href = "#!main";
-            		}
-            	);
-            } else {
-            	$scope.user = resp;
-            	window.location.href = "#!main";
-            }
-          }
-        );
+    	if(gapi.client == null){
+        	$scope.waitingForApi = true;
+        	$scope.googleUser = googleUser;
+    	} else {
+    		gapi.client.tinytwittendpoint.getUser({userId: +(GoogleAuth.getIdGoogleAuth())}).execute(
+	          function(resp) {
+	            if(resp.id == null){
+	            	gapi.client.tinytwittendpoint.addUser({userId: +(GoogleAuth.getIdGoogleAuth()), pseudo: GoogleAuth.getNameGoogleAuth(), profilePic: GoogleAuth.getImageUrlGoogleAuth()}).execute(
+	            		function(resp) {
+	            			$scope.user = resp;
+	            	    	window.location.href = "#!main";
+	            		}
+	            	);
+	            } else {
+	            	$scope.user = resp;
+	            	window.location.href = "#!main";
+	            }
+	          }
+	        );
+    	}
     };
     
     $window.init = function() {
@@ -31,6 +38,11 @@ app.controller('loggerCtrl', ['$scope', '$window', '$document', 'GoogleAuth', fu
         gapi.client.load('tinytwittendpoint', 'v1', function() {
         	console.log("message api loaded");
         	renderButton();
+        	
+        	if($scope.waitingForApi){
+        		$scope.waitingForApi = false;
+        		onSuccess($scope.googleUser);
+        	}
         }, rootApi);
     }
     
